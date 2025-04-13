@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\login_controller;
 use App\Http\Controllers\admin_controller;
+use App\Http\Controllers\user_controller;
 use App\Http\Controllers\country_controller;
 use App\Http\Controllers\category_controller;
 use App\Http\Controllers\company_controller;
@@ -120,6 +121,13 @@ Route::group([
     Route::post('/category_opportunities/{id}', [jobopportunity_controller::class, 'category_opportunities']);
     Route::post('/region_opportunities/{id}', [jobopportunity_controller::class, 'region_opportunities']);
 
+
+    Route::post('/users', [user_controller::class, 'users']);
+    Route::post('/add_user', [user_controller::class, 'add_user']);
+    Route::post('/view_user', [user_controller::class, 'view_user']);
+    Route::post('/update_user', [user_controller::class, 'update_user']);
+    Route::post('/delete_user', [user_controller::class, 'delete_user']);
+    Route::post('/filte_users', [user_controller::class, 'filte_users']);
 
 });
 

@@ -38,4 +38,8 @@ class country extends Model
     {
         return $this->hasMany(company::class, 'country_id', 'id');
     }
+    public function users()
+    {
+        return $this->hasMany(User::class, 'country_id', 'id');
+    }
 }
