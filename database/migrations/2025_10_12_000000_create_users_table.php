@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->date('birthday')->nullable();
-            $table->foreignId('country_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('region_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('country_id')->nullable()->references('id')->on('countries')->onDelete('set null');
+            $table->foreignId('region_id')->nullable()->references('id')->on('regions')->onDelete('set null');
             $table->string('password')->nullable();
             $table->string('verification_code')->nullable();
             $table->timestamp('code_expires_at')->nullable();
@@ -28,9 +28,9 @@ return new class extends Migration
 
             // حقول جديدة لتسجيل الدخول الاجتماعي
             $table->enum('provider', ['email', 'google', 'apple'])->default('email');
-            $table->string('provider_id')->nullable()->comment('المعرف الفريد من مزود الخدمة');
-            $table->string('provider_token')->nullable()->comment('Token من مزود الخدمة');
-            $table->string('provider_refresh_token')->nullable()->comment('Refresh Token من مزود الخدمة');
+            $table->string('provider_id')->nullable();//->comment('المعرف الفريد من مزود الخدمة');
+            $table->string('provider_token')->nullable();//->comment('Token من مزود الخدمة');
+            $table->string('provider_refresh_token')->nullable();//->comment('Refresh Token من مزود الخدمة');
 
         });
     }
