@@ -12,6 +12,7 @@ use App\Http\Controllers\company_controller;
 use App\Http\Controllers\allcategory_controller;
 use App\Http\Controllers\customfield_controller;
 use App\Http\Controllers\jobopportunity_controller;
+use App\Http\Controllers\ads_controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,7 +128,14 @@ Route::group([
     Route::post('/view_user', [user_controller::class, 'view_user']);
     Route::post('/update_user', [user_controller::class, 'update_user']);
     Route::post('/delete_user', [user_controller::class, 'delete_user']);
-    Route::post('/filte_users', [user_controller::class, 'filte_users']);
+    Route::post('/filter_users', [user_controller::class, 'filter_users']);
+
+    Route::post('/all_ads', [ads_controller::class, 'all_ads']);
+    Route::post('/add_ad', [ads_controller::class, 'add_ad']);
+    Route::post('/view_ad', [ads_controller::class, 'view_ad']);
+    Route::post('/update_ad', [ads_controller::class, 'update_ad']);
+    Route::post('/delete_ad', [ads_controller::class, 'delete_ad']);
+    Route::post('/filter_ads', [ads_controller::class, 'filter_ads']);
 
 });
 

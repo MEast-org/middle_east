@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('custom_field_values', function (Blueprint $table) {
             $table->id();
+
+            // إضافة الحقلين للمورف
+            $table->morphs('owner_table');
+
             $table->foreignId('custom_field_id')->constrained()->onDelete('cascade');
-            $table->foreignId('opportunity_id')->references('id')->on('job_opportunities')->onDelete('cascade');
             $table->json('value')->nullable();
             $table->string('file_path')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

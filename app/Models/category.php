@@ -80,5 +80,10 @@ class category extends Model
          );
         }
 
+        public function ads()
+    {
+        return $this->hasMany(ads::class, 'category_id', 'id');
+    }
+
 
 }

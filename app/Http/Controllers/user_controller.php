@@ -151,7 +151,7 @@ public function delete_user(Request $request)
 
     return response()->json(['message' => 'User deleted successfully']);
 }
-public function filte_users(Request $request)
+public function filter_users(Request $request)
 {
     $search = $request->search;
 
@@ -161,6 +161,7 @@ public function filte_users(Request $request)
         $query->where(function($q) use ($search) {
             $q->where('name', 'like', "%$search%")
               ->orWhere('email', 'like', "%$search%")
+              ->orWhere('id', '=', "$search")
               ->orWhere('gender', 'like', "%$search%")
               ->orWhere('birthday', 'like', "%$search%")
               ->orWhereHas('country', function($q) use ($search) {

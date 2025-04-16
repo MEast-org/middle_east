@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\fieldRequest;
 use Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Models\custom_field;
 use App\Models\custom_field_value;
 use App\Models\category;
@@ -295,21 +296,285 @@ class customfield_controller extends Controller
         //     ]);
         // }
 
-        public function addupdate_fieldvalue(Request $request)
+
+
+//         public function addupdate_fieldvalue(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'opportunity_id' => 'required|exists:job_opportunities,id',
+//         'fields' => 'required|array',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+//     }
+
+//     $opportunityId = $request->input('opportunity_id');
+//     $fields = $request->has('fields') ? $request->input('fields', []) : [];
+
+//     // دمج الحقول والملفات مع الحفاظ على المفاتيح
+//     foreach ($request->file('fields', []) as $fieldId => $file) {
+//         $fields[$fieldId] = $file;
+//     }
+
+//     $savedFields = [];
+
+//     foreach ($fields as $fieldId => $inputValue) {
+//         $customField = custom_field::find($fieldId);
+//         if (!$customField) {
+//             continue;
+//         }
+
+//         $isRequired = $customField->is_required;
+//         $type = $customField->type;
+//         $existingValue = custom_field_value::where([
+//             'custom_field_id' => $customField->id,
+//             'opportunity_id' => $opportunityId
+//         ])->first();
+
+//         $valueToStore = null;
+//         $filePath = $existingValue->value ?? null;
+
+//         // معالجة الملفات
+//         if ($type === 'file') {
+//             $file = $request->file("fields.{$fieldId}");
+
+//         //       // حالة الحقل غير المطلوب المرسل فارغًا
+//         // if (!$isRequired && !$file) {
+//         //     if ($existingValue && $existingValue->value) {
+//         //         Storage::disk('public')->delete($existingValue->value);
+//         //         $existingValue->update([
+//         //             'file_path' => null,
+//         //             'value' => null
+//         //         ]);
+//         //         \Log::info("Cleared file for field ID: {$fieldId} as empty submission");
+//         //     }
+//         //     continue;
+//         // }
+
+//             if ($isRequired && !$file) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => 'No file was uploaded for ' . $customField->en_name
+//                 ], 422);
+//             }
+
+//             if ($file && $file->isValid()) {
+//                 $path = $file->store('custom_fields', 'public');
+//                 $filePath = $path;
+
+//                 // حذف الملف القديم إن وجد
+//                 if ($existingValue && $existingValue->value) {
+//                     Storage::disk('public')->delete($existingValue->value);
+//                 }
+
+//                 // تخزين المسار في value بدلاً من file_path
+//                 $valueToStore = $path;
+//             }
+//         }
+//         // معالجة باقي أنواع الحقول
+//         elseif ($type === 'checkbox') {
+//             $valueArray = is_array($inputValue) ? $inputValue : [$inputValue];
+//             if ($isRequired && empty($valueArray)) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "{$customField->en_name} is required"
+//                 ], 422);
+//             }
+//             $valueToStore = json_encode($valueArray);
+//         } else {
+//             if ($isRequired && (is_null($inputValue) || $inputValue === '')) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "{$customField->en_name} is required"
+//                 ], 422);
+//             }
+//             $valueToStore = $inputValue;
+//         }
+
+//         // حفظ واحد لجميع أنواع الحقول
+//         $custom_field_value = custom_field_value::updateOrCreate(
+//             [
+//                 'custom_field_id' => $customField->id,
+//                 'opportunity_id' => $opportunityId,
+//             ],
+//             [
+//                 'value' => $valueToStore,
+//                 //'file_path' => $valueToStore // يمكن إزالته إذا كنت تريد استخدام value فقط
+//             ]
+//         );
+
+//         if ($custom_field_value) {
+//             $custom_field_value->field_info = $customField;
+//             $savedFields[] = $custom_field_value;
+//         }
+//     }
+
+//     return response()->json([
+//         'status' => true,
+//         'custom_field_values' => $savedFields
+//     ]);
+// }
+
+
+// public function addupdate_fieldvalue(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'owner_type' => 'required|in:job_opportunity,ads', // حسب المورف ماب
+//         'owner_id' => 'required|integer',
+//         'fields' => 'required|array',
+//     ]);
+
+
+// $validator->after(function ($validator) use ($request) {
+//     $ownerType = $request->input('owner_type');
+//     $ownerId = $request->input('owner_id');
+
+//     // نحصل على الـ morphMap
+//     $map = Relation::morphMap();
+
+//     if (!isset($map[$ownerType])) {
+//         $validator->errors()->add('owner_type', 'Invalid owner_type provided.');
+//         return;
+//     }
+
+//     $modelClass = $map[$ownerType];
+
+//     if (!$modelClass::where('id', $ownerId)->exists()) {
+//         $validator->errors()->add('owner_id', 'The selected owner_id does not exist in the ' . $ownerType . ' table.');
+//     }
+// });
+
+//     if ($validator->fails()) {
+//         return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+//     }
+
+//     $ownerTypeInput = $request->input('owner_type');
+//     $ownerType = Relation::getMorphedModel($ownerTypeInput); // يستخدم morphMap
+//     $ownerId = $request->input('owner_id');
+//     $fields = $request->input('fields', []);
+
+//     foreach ($request->file('fields', []) as $fieldId => $file) {
+//         $fields[$fieldId] = $file;
+//     }
+
+//     $savedFields = [];
+
+//     foreach ($fields as $fieldId => $inputValue) {
+//         $customField = custom_field::find($fieldId);
+//         if (!$customField) continue;
+
+//         $isRequired = $customField->is_required;
+//         $type = $customField->type;
+
+//         $existingValue = custom_field_value::where([
+//             'custom_field_id' => $customField->id,
+//             'owner_table_type' => $ownerType,
+//             'owner_table_id' => $ownerId,
+//         ])->first();
+
+//         $valueToStore = null;
+
+//         if ($type === 'file') {
+//             $file = $request->file("fields.{$fieldId}");
+
+//             if ($isRequired && !$file) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => 'No file uploaded for ' . $customField->en_name
+//                 ], 422);
+//             }
+
+//             if ($file && $file->isValid()) {
+//                 $path = $file->store('custom_fields', 'public');
+
+//                 if ($existingValue && $existingValue->value) {
+//                     Storage::disk('public')->delete($existingValue->value);
+//                 }
+
+//                 $valueToStore = $path;
+//             }
+//         } elseif ($type === 'checkbox') {
+//             $valueArray = is_array($inputValue) ? $inputValue : [$inputValue];
+//             if ($isRequired && empty($valueArray)) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "{$customField->en_name} is required"
+//                 ], 422);
+//             }
+//             $valueToStore = json_encode($valueArray);
+//         } else {
+//             if ($isRequired && (is_null($inputValue) || $inputValue === '')) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "{$customField->en_name} is required"
+//                 ], 422);
+//             }
+//             $valueToStore = $inputValue;
+//         }
+
+//         $custom_field_value = custom_field_value::updateOrCreate(
+//             [
+//                 'custom_field_id' => $customField->id,
+//                 'owner_table_type' => $ownerType,
+//                 'owner_table_id' => $ownerId,
+//             ],
+//             [
+//                 'value' => $valueToStore,
+//             ]
+//         );
+
+//         if ($custom_field_value) {
+//             $custom_field_value->field_info = $customField;
+//             $savedFields[] = $custom_field_value;
+//         }
+//     }
+
+//     return response()->json([
+//         'status' => true,
+//         'custom_field_values' => $savedFields
+//     ]);
+// }
+
+public function addupdate_fieldvalue(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'opportunity_id' => 'required|exists:job_opportunities,id',
+        'owner_type' => 'required|in:job_opportunity,ads',
+        'owner_id' => 'required|integer',
         'fields' => 'required|array',
     ]);
+
+    $validator->after(function ($validator) use ($request) {
+        $ownerType = $request->input('owner_type');
+        $ownerId = $request->input('owner_id');
+
+        $map = Relation::morphMap();
+
+        if (!isset($map[$ownerType])) {
+            $validator->errors()->add('owner_type', 'Invalid owner_type provided.');
+            return;
+        }
+
+        $modelClass = $map[$ownerType];
+
+        if (!$modelClass::where('id', $ownerId)->exists()) {
+            $validator->errors()->add('owner_id', 'The selected owner_id does not exist in the ' . $ownerType . ' table.');
+        }
+    });
 
     if ($validator->fails()) {
         return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
     }
+    //     return response()->json(['owner type' => $request->owner_type,'owner id' => $request->owner_id],200);
 
-    $opportunityId = $request->input('opportunity_id');
-    $fields = $request->has('fields') ? $request->input('fields', []) : [];
 
-    // دمج الحقول والملفات مع الحفاظ على المفاتيح
+
+    $ownerTypeInput = $request->input('owner_type'); // مثل: "ads"
+    $ownerType = Relation::getMorphedModel($ownerTypeInput); // مثل: App\Models\ads
+    $ownerId = $request->input('owner_id');
+    $fields = $request->input('fields', []);
+
+    // دمج الملفات مع الحقول
     foreach ($request->file('fields', []) as $fieldId => $file) {
         $fields[$fieldId] = $file;
     }
@@ -318,59 +583,37 @@ class customfield_controller extends Controller
 
     foreach ($fields as $fieldId => $inputValue) {
         $customField = custom_field::find($fieldId);
-        if (!$customField) {
-            continue;
-        }
+        if (!$customField) continue;
 
         $isRequired = $customField->is_required;
         $type = $customField->type;
+        $valueToStore = null;
+
+        // البحث عن قيمة موجودة
         $existingValue = custom_field_value::where([
-            'custom_field_id' => $customField->id,
-            'opportunity_id' => $opportunityId
+            'custom_field_id' =>$customField->id,
+            'owner_table_type' =>$ownerTypeInput,
+            'owner_table_id' =>$ownerId,
         ])->first();
 
-        $valueToStore = null;
-        $filePath = $existingValue->value ?? null;
-
-        // معالجة الملفات
+        // معالجة أنواع الحقول
         if ($type === 'file') {
             $file = $request->file("fields.{$fieldId}");
-
-        //       // حالة الحقل غير المطلوب المرسل فارغًا
-        // if (!$isRequired && !$file) {
-        //     if ($existingValue && $existingValue->value) {
-        //         Storage::disk('public')->delete($existingValue->value);
-        //         $existingValue->update([
-        //             'file_path' => null,
-        //             'value' => null
-        //         ]);
-        //         \Log::info("Cleared file for field ID: {$fieldId} as empty submission");
-        //     }
-        //     continue;
-        // }
-
             if ($isRequired && !$file) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'No file was uploaded for ' . $customField->en_name
+                    'message' => "No file uploaded for {$customField->en_name}"
                 ], 422);
             }
 
             if ($file && $file->isValid()) {
                 $path = $file->store('custom_fields', 'public');
-                $filePath = $path;
-
-                // حذف الملف القديم إن وجد
                 if ($existingValue && $existingValue->value) {
                     Storage::disk('public')->delete($existingValue->value);
                 }
-
-                // تخزين المسار في value بدلاً من file_path
                 $valueToStore = $path;
             }
-        }
-        // معالجة باقي أنواع الحقول
-        elseif ($type === 'checkbox') {
+        } elseif ($type === 'checkbox') {
             $valueArray = is_array($inputValue) ? $inputValue : [$inputValue];
             if ($isRequired && empty($valueArray)) {
                 return response()->json([
@@ -389,15 +632,17 @@ class customfield_controller extends Controller
             $valueToStore = $inputValue;
         }
 
-        // حفظ واحد لجميع أنواع الحقول
+
+        //return response()->json(['owner type' => $ownerTypeInput,'owner id' =>$ownerId],200);
+        // حفظ القيمة
         $custom_field_value = custom_field_value::updateOrCreate(
             [
-                'custom_field_id' => $customField->id,
-                'opportunity_id' => $opportunityId,
+                'custom_field_id' =>$customField->id,
+                'owner_table_type' =>$ownerTypeInput,
+                'owner_table_id' =>$ownerId,
             ],
             [
                 'value' => $valueToStore,
-                //'file_path' => $valueToStore // يمكن إزالته إذا كنت تريد استخدام value فقط
             ]
         );
 

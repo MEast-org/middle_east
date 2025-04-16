@@ -52,6 +52,7 @@ class company extends Authenticatable implements JWTSubject
         ]);
     }
 
+
     // علاقة مع المنطقة
     public function region()
     {
@@ -59,6 +60,11 @@ class company extends Authenticatable implements JWTSubject
             'name' => 'غير محدد',
             'id' => 0
         ]);
+    }
+
+    public function ads()
+    {
+        return $this->morphMany(ads::class, 'publisher');
     }
 
 }

@@ -42,4 +42,8 @@ class country extends Model
     {
         return $this->hasMany(User::class, 'country_id', 'id');
     }
+    public function ads()
+    {
+        return $this->hasMany(ads::class, 'country_id', 'id');
+    }
 }

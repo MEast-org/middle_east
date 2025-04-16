@@ -37,4 +37,9 @@ class region extends Model
         return $this->hasMany(User::class, 'region_id', 'id');
     }
 
+    public function ads()
+    {
+        return $this->hasMany(ads::class, 'region_id', 'id');
+    }
+
 }

@@ -67,6 +67,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->belongsTo(region::class,'region_id','id');
     }
+    public function ads()
+    {
+        return $this->morphMany(ads::class, 'publisher');
+    }
 
     // Methods for JWT
     public function getJWTIdentifier()
