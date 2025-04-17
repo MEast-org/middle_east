@@ -9,6 +9,8 @@ use App\Models\user;
 use App\Models\country;
 use App\Models\region;
 use App\Models\ads;
+use App\Models\custom_field;
+use App\Models\custom_field_value;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Validator;
@@ -25,10 +27,10 @@ class ads_controller extends Controller
     public function __construct() {
         $this->middleware('admin_auth:admin-api');
     }
-    
+
     public function all_ads()
     {
-        $ads = ads::with(['country', 'region', 'category','publisher'])->paginate(10); // استخدام التصفح
+        $ads = ads::with(['country', 'region', 'category.ancestors','publisher','fieldvalues.field'])->paginate(10); // استخدام التصفح
         return response()->json([
             'ads' => $ads
         ]);
@@ -47,7 +49,7 @@ class ads_controller extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $ad =ads::with(['country', 'region', 'category','publisher'])->find($request->id);
+        $ad =ads::with(['country', 'region', 'category.ancestors','publisher','fieldvalues.field'])->find($request->id);
         return response()->json([
             'ad' => $ad
         ]);
@@ -105,6 +107,28 @@ class ads_controller extends Controller
         }
 
         $ad = ads::find($request->id);
+
+        $oldCategoryId = $ad->category_id;
+        // إذا أرسل category_id في الريكوست
+        if ($request->has('category_id')) {
+            $newCategoryId = $request->input('category_id');
+
+            // إذا تغيّرت الفئة
+            if ($oldCategoryId != $newCategoryId) {
+                // حذف القيم المرتبطة بالفئة القديمة
+                $oldFieldIds =custom_field::where('category_id', $oldCategoryId)->pluck('id');
+
+                custom_field_value::where('owner_table_type', 'ads')
+                    ->where('owner_table_id', $ad->id)
+                    ->whereIn('custom_field_id', $oldFieldIds)
+                    ->delete();
+            }
+        }
+
+
+
+
+
         $ad->update($validator->validated());
 
         return response()->json([
@@ -152,18 +176,18 @@ public function filter_ads(Request $request)
         $query->where('category_id', $request->category_id);
     }
 
-    if ($request->filled('date_from')) {
-        $dateFrom = Carbon::parse($request->date_from)->format('Y-m-d');
+    if ($request->filled('start_date')) {
+        $dateFrom = Carbon::parse($request->start_date)->format('Y-m-d');
         $query->whereDate('created_at', '>=', $dateFrom);
     }
 
-    if ($request->filled('date_to')) {
-        $dateTo = Carbon::parse($request->date_to)->format('Y-m-d');
+    if ($request->filled('end_date')) {
+        $dateTo = Carbon::parse($request->end_date)->format('Y-m-d');
         $query->whereDate('created_at', '<=', $dateTo);
     }
 
     // إحضار العلاقات
-    $ads = $query->with(['country', 'region', 'category', 'publisher'])->paginate(10);
+    $ads = $query->with(['country', 'region', 'category.ancestors','publisher','fieldvalues.field'])->paginate(10);
 
     return response()->json([
         'ads' => $ads

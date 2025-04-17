@@ -621,7 +621,7 @@ public function addupdate_fieldvalue(Request $request)
                     'message' => "{$customField->en_name} is required"
                 ], 422);
             }
-            $valueToStore = json_encode($valueArray);
+            $valueToStore = $valueArray;
         } else {
             if ($isRequired && (is_null($inputValue) || $inputValue === '')) {
                 return response()->json([

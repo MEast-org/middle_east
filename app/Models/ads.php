@@ -48,4 +48,12 @@ class ads extends Model
     {
         return $this->morphMany(custom_field_value::class, 'owner_table');
     }
-}
+        protected static function booted()
+    {
+        static::deleting(function ($ad) {
+            custom_field_value::where('owner_table_type', 'ads')
+                ->where('owner_table_id', $ad->id)
+                ->delete();
+        });
+    }
+    }
