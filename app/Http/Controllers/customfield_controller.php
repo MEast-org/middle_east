@@ -554,7 +554,6 @@ public function addupdate_fieldvalue(Request $request)
             $validator->errors()->add('owner_type', 'Invalid owner_type provided.');
             return;
         }
-
         $modelClass = $map[$ownerType];
 
         if (!$modelClass::where('id', $ownerId)->exists()) {
