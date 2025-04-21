@@ -13,6 +13,7 @@ use App\Http\Controllers\allcategory_controller;
 use App\Http\Controllers\customfield_controller;
 use App\Http\Controllers\jobopportunity_controller;
 use App\Http\Controllers\ads_controller;
+use App\Http\Controllers\auction_controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,6 +137,15 @@ Route::group([
     Route::post('/update_ad', [ads_controller::class, 'update_ad']);
     Route::post('/delete_ad', [ads_controller::class, 'delete_ad']);
     Route::post('/filter_ads', [ads_controller::class, 'filter_ads']);
+
+    Route::post('/auctions', [auction_controller::class, 'auctions']);
+    Route::post('/add_auction', [auction_controller::class, 'add_auction']);
+    Route::post('/view_auction/{id}', [auction_controller::class, 'view_auction']);
+    Route::post('/update_auction/{id}', [auction_controller::class, 'update_auction']);
+    Route::post('/update_status/{id}', [auction_controller::class, 'update_status']);
+    Route::post('/delete_auction/{id}', [auction_controller::class, 'delete_auction']);
+    Route::post('/delete_image/{id}', [auction_controller::class, 'delete_image']);
+    Route::post('/filter_auction', [auction_controller::class, 'filter_auctions']);
 
 });
 

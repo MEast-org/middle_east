@@ -30,7 +30,7 @@ class auction extends Model
 
     public function images()
     {
-        return $this->hasMany(auction_image::class,'auction_id','id');
+        return $this->hasMany(auction_images::class,'auction_id','id');
     }
 
     public function category()
