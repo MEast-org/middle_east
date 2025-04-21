@@ -245,11 +245,11 @@ public function filter_auctions(Request $request)
     }
 
     if ($request->filled('start_date')) {
-        $query->whereDate('start_date', '>=', Carbon::parse($request->start_date)->format('Y-m-d'));
+        $query->whereDate('start_date', '>=', Carbon::parse($request->start_date)->format('Y-m-d H:i:s'));
     }
 
     if ($request->filled('end_date')) {
-        $query->whereDate('end_date', '<=', Carbon::parse($request->end_date)->format('Y-m-d'));
+        $query->whereDate('end_date', '<=', Carbon::parse($request->end_date)->format('Y-m-d H:i:s'));
     }
 
     $auctions = $query->with(['publisher', 'images', 'category', 'country', 'region'])->latest()->paginate(10);
