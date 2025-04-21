@@ -252,9 +252,9 @@ public function filter_auctions(Request $request)
         $query->whereDate('end_date', '<=', Carbon::parse($request->end_date)->format('Y-m-d'));
     }
 
-    $auctions = $query->with('images')->latest()->paginate(10);
+    $auctions = $query->with(['publisher', 'images', 'category', 'country', 'region'])->latest()->paginate(10);
 
-    return response()->json($auctions);
+    return response()->json(['auctions' => $auctions]);
 }
 
 
