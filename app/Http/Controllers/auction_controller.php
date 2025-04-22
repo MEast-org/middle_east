@@ -28,14 +28,14 @@ class auction_controller extends Controller
 
     public function auctions()
     {
-        $auctions = auction::with(['publisher', 'images', 'category', 'country', 'region'])->latest()->paginate(10);
+        $auctions = auction::with(['publisher', 'images', 'category.ancestors', 'country', 'region'])->latest()->paginate(10);
         return response()->json(['auction' => $auctions]);
     }
 
 
     public function view_auction($id)
     {
-        $auction = auction::with(['publisher', 'images', 'category', 'country', 'region'])->find($id);
+        $auction = auction::with(['publisher', 'images', 'category.ancestors', 'country', 'region'])->find($id);
         if (!$auction) {
             return response()->json(['error' => 'Auction not found'], 404);
         }
@@ -252,7 +252,7 @@ public function filter_auctions(Request $request)
         $query->whereDate('end_date', '<=', Carbon::parse($request->end_date)->format('Y-m-d H:i:s'));
     }
 
-    $auctions = $query->with(['publisher', 'images', 'category', 'country', 'region'])->latest()->paginate(10);
+    $auctions = $query->with(['publisher', 'images','category.ancestors', 'country', 'region'])->latest()->paginate(10);
 
     return response()->json(['auctions' => $auctions]);
 }
