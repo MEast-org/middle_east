@@ -4,16 +4,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\login_controller;
-use App\Http\Controllers\admin_controller;
-use App\Http\Controllers\user_controller;
-use App\Http\Controllers\country_controller;
-use App\Http\Controllers\category_controller;
-use App\Http\Controllers\company_controller;
-use App\Http\Controllers\allcategory_controller;
-use App\Http\Controllers\customfield_controller;
-use App\Http\Controllers\jobopportunity_controller;
-use App\Http\Controllers\ads_controller;
-use App\Http\Controllers\auction_controller;
+use App\Http\Controllers\admin\admin_controller;
+use App\Http\Controllers\admin\user_controller;
+use App\Http\Controllers\admin\country_controller;
+use App\Http\Controllers\admin\category_controller;
+use App\Http\Controllers\admin\company_controller;
+use App\Http\Controllers\admin\allcategory_controller;
+use App\Http\Controllers\admin\customfield_controller;
+use App\Http\Controllers\admin\jobopportunity_controller;
+use App\Http\Controllers\admin\ads_controller;
+use App\Http\Controllers\admin\auction_controller;
+use App\Http\Controllers\user\user_notification;
+use App\Http\Controllers\admin\admin_notification;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,6 +148,20 @@ Route::group([
     Route::post('/delete_auction/{id}', [auction_controller::class, 'delete_auction']);
     Route::post('/delete_image/{id}', [auction_controller::class, 'delete_image']);
     Route::post('/filter_auction', [auction_controller::class, 'filter_auctions']);
+
+    Route::post('/send_notification', [admin_notification::class, 'send_notification']);
+
+
+
+});
+
+
+
+
+Route::group([
+    'prefix' => 'user'
+], function ($router) {//view_admin,update_profile,profile,logout,view_admin,
+    Route::post('/saveFcmToken', [user_notification::class, 'saveFcmToken']);
 
 });
 

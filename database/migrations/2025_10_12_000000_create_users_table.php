@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('verification_code')->nullable();
             $table->timestamp('code_expires_at')->nullable();
             $table->timestamp('verified_at')->nullable();
-            $table->timestamps();
+            $table->string('fcm_token')->nullable();
+
 
             // حقول جديدة لتسجيل الدخول الاجتماعي
             $table->enum('provider', ['email', 'google', 'apple'])->default('email');
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->string('provider_token')->nullable();//->comment('Token من مزود الخدمة');
             $table->string('provider_refresh_token')->nullable();//->comment('Refresh Token من مزود الخدمة');
 
+            $table->timestamps();
         });
     }
 

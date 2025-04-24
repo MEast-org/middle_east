@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('trade_log')->nullable(); // ملف السجل التجاري
             $table->enum('state', ['active', 'inactive', 'pending'])->default('active');
+            $table->string('fcm_token')->nullable();
             $table->timestamps();
         });
     }

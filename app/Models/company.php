@@ -24,7 +24,8 @@ class company extends Authenticatable implements JWTSubject
         'phone',
         'logo',
         'trade_log',
-        'state'
+        'state',
+        'fcm_token',
     ];
 
 

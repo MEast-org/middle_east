@@ -18,6 +18,7 @@ class admin extends Authenticatable implements JWTSubject
         'password',
         'image',
         'role',
+        'fcm_token',
     ];
 
     // protected $hidden = [
