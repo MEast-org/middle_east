@@ -16,6 +16,7 @@ use App\Http\Controllers\admin\ads_controller;
 use App\Http\Controllers\admin\auction_controller;
 use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\admin\admin_notification;
+use App\Http\Controllers\user\homepage_controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -162,6 +163,17 @@ Route::group([
     'prefix' => 'user'
 ], function ($router) {//view_admin,update_profile,profile,logout,view_admin,
     Route::post('/saveFcmToken', [user_notification::class, 'saveFcmToken']);
+
+});
+
+
+
+Route::group([
+    'prefix' => 'Home'
+], function ($router) {
+    Route::get('/countries', [homepage_controller::class, 'countries']);
+    Route::get('countryRegions/{id}',[homepage_controller::class, 'countryRegions']);
+    Route::get('parentCategories',[homepage_controller::class, 'parentCategories']);
 
 });
 

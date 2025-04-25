@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\admin;
@@ -11,9 +12,12 @@ use Illuminate\Support\Facades\Hash;
 use Validator;
 use Illuminate\Support\Facades\Storage;
 
+
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Kreait\Laravel\Firebase\Facades\Firebase;
+use Kreait\Firebase\Factory;
+
 
 class admin_notification extends Controller
 {
@@ -28,38 +32,51 @@ class admin_notification extends Controller
 
 
 public function send_notification(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string',
-        'body' => 'required|string',
-        'recipients' => 'required|array', // array of user ids
-        'type' => 'required|in:user,company',
+ {
+//     $request->validate([
+//         'title' => 'required|string',
+//         'body' => 'required|string',
+//         'recipients' => 'required|array', // array of user ids
+//         'type' => 'required|in:user,company',
+//     ]);
+
+//     $tokens = [];
+
+//     if ($request->type === 'user') {
+//         $tokens = User::whereIn('id', $request->recipients)
+//                     ->whereNotNull('fcm_token')
+//                     ->pluck('fcm_token')
+//                     ->toArray();
+//     } elseif($request->type === 'company') {
+//         $tokens = company::whereIn('id', $request->recipients)
+//                     ->whereNotNull('fcm_token')
+//                     ->pluck('fcm_token')
+//                     ->toArray();
+//     }
+
+//     $messaging = Firebase::messaging();
+
+//    // foreach ($tokens as $token) {
+//         $message = CloudMessage::withTarget('token', "fIU9pNmFbJuGUy5oBVR8vI:APA91bERlsPu2RzqDpGtnQ-LIZ7DhgPX4NTptIaDdnry_VYDxqm4S_84aqOf3d6A9YharPgfJexDfgvnDXAsdGaOj0S7qiTTXoiQSjwsJNCFetHyAC4J0Vs")
+//             ->withNotification(Notification::create($request->title, $request->body));
+
+//         $messaging->send($message);
+//    // }
+
+
+    $factory = (new Factory)->withServiceAccount(storage_path('app/firebase/me-project-firebase.json'))
+                            ->withDatabaseUri('https://me-project-b5213-default-rtdb.firebaseio.com/');
+
+    $database = $factory->createDatabase();
+
+    // إنشئ مفتاح جديد اسمه test
+    $data = $database->getReference('test')->set(['msg'=>'mounep']);
+
+    return response()->json([
+        'message' => 'Notifications sent.',
+
+
     ]);
-
-    $tokens = [];
-
-    if ($request->type === 'user') {
-        $tokens = User::whereIn('id', $request->recipients)
-                    ->whereNotNull('fcm_token')
-                    ->pluck('fcm_token')
-                    ->toArray();
-    } elseif($request->type === 'company') {
-        $tokens = company::whereIn('id', $request->recipients)
-                    ->whereNotNull('fcm_token')
-                    ->pluck('fcm_token')
-                    ->toArray();
-    }
-
-    $messaging = Firebase::messaging();
-
-   // foreach ($tokens as $token) {
-        $message = CloudMessage::withTarget('token', "fIU9pNmFbJuGUy5oBVR8vI:APA91bERlsPu2RzqDpGtnQ-LIZ7DhgPX4NTptIaDdnry_VYDxqm4S_84aqOf3d6A9YharPgfJexDfgvnDXAsdGaOj0S7qiTTXoiQSjwsJNCFetHyAC4J0Vs")
-            ->withNotification(Notification::create($request->title, $request->body));
-
-        $messaging->send($message);
-   // }
-
-    return response()->json(['message' => 'Notifications sent.']);
 
 //     $messaging = Firebase::messaging();
 
