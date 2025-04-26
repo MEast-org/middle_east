@@ -56,4 +56,15 @@ class ads extends Model
                 ->delete();
         });
     }
+
+    public function incrementViews()
+    {
+        $this->increment('views');
+    }
+
+    // زيادة عدد المشاركات
+    public function incrementShares()
+    {
+        $this->increment('shares');
+    }
     }

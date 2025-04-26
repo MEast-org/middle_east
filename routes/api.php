@@ -175,6 +175,14 @@ Route::group([
     Route::get('countryRegions/{id}',[homepage_controller::class, 'countryRegions']);
     Route::get('parentCategories',[homepage_controller::class, 'parentCategories']);
 
+    Route::get('/ads', [homepage_controller::class, 'all_ads']);
+    Route::get('/ads/{id}', [homepage_controller::class, 'view_ad']);
+
+    Route::get('/opportunities', [homepage_controller::class, 'opportunities']);
+    Route::get('/opportunities/{id}', [homepage_controller::class, 'view_opportunity']);
+    Route::get('/auction', [homepage_controller::class, 'the_auction']); 
+    Route::get('/auction/{id}', [homepage_controller::class, 'view_auction']);
+
 });
 
 
