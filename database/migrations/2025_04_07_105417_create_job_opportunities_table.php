@@ -13,16 +13,23 @@ return new class extends Migration
     {
         Schema::create('job_opportunities', function (Blueprint $table) {
             $table->id();
-            $table->string('en_name');
-            $table->string('ar_name');
+
+            $table->morphs('publisher');//new
+            $table->string('name');
+
 
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
-            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('set null');
             $table->foreignId('region_id')->nullable()->constrained('regions')->onDelete('set null');
             $table->text('description')->nullable();
+            $table->decimal('min_salary', 10, 3)->nullable();//new
+            $table->decimal('max_salary', 10, 3)->nullable();//new
+            $table->date('starts_at')->nullable();//new
             $table->date('expires_at')->nullable();
             $table->enum('type', ['full_time', 'part_time', 'contract', 'internship', 'remote']);
+            $table->json('social_links')->nullable();//new
+            $table->enum('state', ['active', 'inactive'])->default('active');//new
+
             $table->unsignedInteger('views')->default(0);
             $table->unsignedInteger('shares')->default(0);
             $table->unsignedInteger('applicants')->default(0);

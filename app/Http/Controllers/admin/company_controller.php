@@ -56,13 +56,12 @@ class company_controller extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'ar_name' => 'required|string|max:255',
-            'en_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:companies',
             'password' => 'required|string|min:8',
             'country_id' => 'required|exists:countries,id',
             'region_id' => 'required|exists:regions,id',
-            'phone' => 'required|string|unique:companies',
+            'phone' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'trade_log' => 'nullable|file|mimes:pdf,jpg,png,jpeg|max:2048',
             'state' => 'sometimes|in:active,inactive,pending'
@@ -102,13 +101,12 @@ class company_controller extends Controller
 
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:companies,id',
-            'ar_name' => 'sometimes|required|string|max:255',
-            'en_name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|string|email|max:255|unique:companies,email,'.$request->id,
             'password' => 'sometimes|required|string|min:8',
             'country_id' => 'sometimes|nullable|exists:countries,id',
             'region_id' => 'sometimes|nullable|exists:regions,id',
-            'phone' => 'sometimes|required|string|unique:companies,phone,'.$request->id,
+            'phone' => 'sometimes|nullable|string',
             'logo' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'trade_log' => 'sometimes|nullable|file|mimes:pdf,jpg,png,jpeg|max:2048',
             'state' => 'sometimes|in:active,inactive,pending'

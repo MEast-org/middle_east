@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('custom_fields', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('ar_name', 100);
             $table->string('en_name', 100);
+            $table->string('ar_name', 100);
             $table->enum('type', [
                 'text',
                 'number',

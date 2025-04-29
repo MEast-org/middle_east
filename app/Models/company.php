@@ -15,8 +15,7 @@ class company extends Authenticatable implements JWTSubject
     use Notifiable,HasFactory;
 
     protected $fillable = [
-        'ar_name',
-        'en_name',
+        'name',
         'email',
         'password',
         'country_id',
@@ -26,6 +25,13 @@ class company extends Authenticatable implements JWTSubject
         'trade_log',
         'state',
         'fcm_token',
+        'verification_code',
+        'code_expires_at',
+        'verified_at',
+        'provider',
+        'provider_id',
+        'provider_token',
+        'provider_refresh_token',
     ];
 
 
@@ -38,11 +44,6 @@ class company extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
-    }
-
-    public function opportunities()
-    {
-        return $this->hasMany(job_opportunity::class, 'company_id', 'id');
     }
 
     public function country()
@@ -66,6 +67,15 @@ class company extends Authenticatable implements JWTSubject
     public function ads()
     {
         return $this->morphMany(ads::class, 'publisher');
+    }
+    public function opportunities()
+    {
+        return $this->morphMany(job_opportunity::class, 'publisher');
+    }
+
+    public function auctions()
+    {
+        return $this->morphMany(auction::class, 'publisher');
     }
 
 }

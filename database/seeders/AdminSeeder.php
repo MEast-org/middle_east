@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Admin;
+use App\Models\admin;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,7 +15,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::create([
+        admin::create([
             'name' => 'admin khaled',
             'email' => 'adminkhaled@gmail.com',
             'password' => bcrypt('khaled123'),

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\opportunityRequest;
 use Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Models\job_opportunity;
@@ -13,6 +12,9 @@ use App\Models\company;
 use App\Models\country;
 use App\Models\category;
 use App\Models\region;
+use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class jobopportunity_controller extends Controller
 {
@@ -28,7 +30,8 @@ class jobopportunity_controller extends Controller
     public function opportunities(Request $request)
     {
             $perPage = $request->input('per_page', 10);
-            $opportunities = job_opportunity::with(['company', 'category', 'country', 'region','fieldvalues.field'])
+            $opportunities = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region'])
+                ->latest()
                 ->paginate($perPage);
 
             return response()->json([
@@ -41,7 +44,7 @@ class jobopportunity_controller extends Controller
     public function view_opportunity($id)
     {
 
-            $opportunity = job_opportunity::with(['company', 'category', 'country', 'region','fieldvalues.field'])
+            $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region'])
                 ->findOrFail($id);
 
             return response()->json([
@@ -51,30 +54,118 @@ class jobopportunity_controller extends Controller
 
     }
 
-      // إنشاء فرصة جديدة
-      public function add_opportunity(opportunityRequest $request)
-      {
-              $opportunity = job_opportunity::create($request->validated());
 
-              return response()->json([
-                  'success' => true,
-                  'data' => $opportunity,
-                  'message' => 'Job opportunity created successfully'
-              ], 201);
-      }
 
-      public function update_opportunity(opportunityRequest $request, $id)
-    {
+public function add_opportunity(Request $request)
+{
+    // التحقق من البيانات
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'category_id' => 'required|exists:categories,id',
+        'country_id' => 'nullable|exists:countries,id',
+        'region_id' => 'nullable|exists:regions,id',
+        'description' => 'nullable|string',
+        'starts_at' => 'nullable|date|after_or_equal:today',
+        'expires_at' => 'nullable|date|after_or_equal:starts_at',
+        'type' => 'required|in:full_time,part_time,contract,internship,remote',
 
-            $opportunity = job_opportunity::findOrFail($id);
-            $opportunity->update($request->validated());
+        'min_salary' => 'nullable|numeric|min:0',
+        'max_salary' => 'nullable|numeric|min:0|gte:min_salary',
 
-            return response()->json([
-                'success' => true,
-                'data' => $opportunity,
-                'message' => 'Job opportunity updated successfully'
-            ],201);
+        'social_links' => 'nullable|array',
+        'social_links.*' => 'nullable|string',
+
+        'publisher_type' => 'required|in:user,company',
+        'publisher_id' => [
+            'required',
+            function ($attribute, $value, $fail) use ($request) {
+                $table = $request->publisher_type === 'user' ? 'users' : 'companies';
+                if (!DB::table($table)->where('id', $value)->exists()) {
+                    $fail("The selected $attribute is invalid.");
+                }
+            },
+        ],
+    ]);
+
+    // تنسيق تاريخ البداية لو موجود
+    if (isset($validated['starts_at'])) {
+        $validated['starts_at'] = Carbon::parse($validated['starts_at'])->format('Y-m-d');
     }
+
+    // تنسيق تاريخ النهاية لو موجود
+    if (isset($validated['expires_at'])) {
+        $validated['expires_at'] = Carbon::parse($validated['expires_at'])->format('Y-m-d');
+    }
+
+    // إنشاء فرصة العمل
+    $opportunity = job_opportunity::create($validated);
+
+    return response()->json([
+        'success' => true,
+        'data' => $opportunity,
+        'message' => 'Job opportunity created successfully',
+    ], 201);
+}
+
+
+public function update_opportunity(Request $request, $id)
+{
+    // إيجاد فرصة العمل
+    $opportunity = job_opportunity::find($id);
+    if (!$opportunity){
+        return response()->json(['error' => 'Not found opportunity'], 404);
+    };
+
+    // التحقق من البيانات
+    $validated = $request->validate([
+        'name' => 'sometimes|required|string|max:255',
+        'category_id' => 'sometimes|required|exists:categories,id',
+        'country_id' => 'sometimes|nullable|exists:countries,id',
+        'region_id' => 'sometimes|nullable|exists:regions,id',
+        'description' => 'sometimes|nullable|string',
+        'starts_at' => 'sometimes|nullable|date|after_or_equal:today',
+        'expires_at' => 'sometimes|nullable|date|after_or_equal:starts_at',
+        'type' => 'sometimes|required|in:full_time,part_time,contract,internship,remote',
+
+        'min_salary' => 'sometimes|nullable|numeric|min:0',
+        'max_salary' => 'sometimes|nullable|numeric|min:0|gte:min_salary',
+
+        'social_links' => 'sometimes|nullable|array',
+        'social_links.*' => 'nullable|string',
+
+        'publisher_type' => 'sometimes|required|in:user,company',
+        'publisher_id' => [
+            'sometimes',
+            'required',
+            function ($attribute, $value, $fail) use ($request) {
+                $table = $request->publisher_type === 'user' ? 'users' : 'companies';
+                if (!DB::table($table)->where('id', $value)->exists()) {
+                    $fail("The selected $attribute is invalid.");
+                }
+            },
+        ],
+    ]);
+
+    // تنسيق تاريخ البداية لو موجود
+    if (isset($validated['starts_at'])) {
+        $validated['starts_at'] = Carbon::parse($validated['starts_at'])->format('Y-m-d');
+    }
+
+    // تنسيق تاريخ النهاية لو موجود
+    if (isset($validated['expires_at'])) {
+        $validated['expires_at'] = Carbon::parse($validated['expires_at'])->format('Y-m-d');
+    }
+
+    // تحديث البيانات
+    $opportunity->update($validated);
+
+    return response()->json([
+        'success' => true,
+        'data' => $opportunity,
+        'message' => 'Job opportunity updated successfully',
+    ]);
+}
+
 
     // حذف فرصة
     public function delelet_opportunity($id)
@@ -99,12 +190,35 @@ class jobopportunity_controller extends Controller
 
 
                     $opportunities = $company->opportunities()
-                        ->with(['category', 'country', 'region'])
+                        ->with(['category.ancestors', 'country', 'region'])
+                        ->latest()
                         ->paginate(10);
 
                     return response()->json([
                         'success' => true,
-                        'company' => $company->only(['id', 'en_name','ar_name']),
+                        'company' => $company->only(['id','name']),
+                        'opportunities' => $opportunities
+                    ]);
+            }
+
+
+            public function user_opportunities($id)
+            {
+
+                if (!User::where('id', $id)->exists()){
+                    return response()->json(['error' => 'Not found user'], 404);
+                };
+                    $user = User::findOrFail($id);
+
+
+                    $opportunities = $user->opportunities()
+                        ->with(['category.ancestors', 'country', 'region'])
+                        ->latest()
+                        ->paginate(10);
+
+                    return response()->json([
+                        'success' => true,
+                        'user' => $user->only(['id','name']),
                         'opportunities' => $opportunities
                     ]);
             }
@@ -119,7 +233,8 @@ class jobopportunity_controller extends Controller
 
 
                     $opportunities = $country->opportunities()
-                        ->with(['category', 'company', 'region'])
+                        ->with(['category.ancestors', 'company', 'region'])
+                        ->latest()
                         ->paginate(10);
 
                     return response()->json([
@@ -140,6 +255,7 @@ class jobopportunity_controller extends Controller
 
                     $opportunities = $category->opportunities()
                         ->with(['country', 'company', 'region'])
+                        ->latest()
                         ->paginate(10);
 
                     return response()->json([
@@ -159,7 +275,7 @@ class jobopportunity_controller extends Controller
 
 
                     $opportunities = $region->opportunities()
-                        ->with(['country', 'company', 'category'])
+                        ->with(['country', 'company', 'category.ancestors'])
                         ->paginate(10);
 
                     return response()->json([

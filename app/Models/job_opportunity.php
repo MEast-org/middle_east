@@ -13,18 +13,24 @@ class job_opportunity extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'en_name',
-        'ar_name',
+        'name',
+        'publisher_type',
+        'publisher_id',
         'category_id',
-        'company_id',
         'country_id',
         'region_id',
         'description',
         'expires_at',
         'type',
+        'state',
+        'min_salary',
+        'max_salary',
+        'starts_at',
+        'social_links',
         'views',
         'shares',
         'applicants'
+
     ];
 
     protected $attributes = [
@@ -34,6 +40,8 @@ class job_opportunity extends Model
     ];
     protected $casts = [
         'expires_at' => 'date',
+        'starts_at' => 'date',
+        'social_links'=>'array',
     ];
 
     // علاقة مع التصنيف
@@ -45,14 +53,19 @@ class job_opportunity extends Model
         ]);
     }
 
-    // علاقة مع الشركة
-    public function company()
-    {
-        return $this->belongsTo(company::class, 'company_id', 'id')->withDefault([
-            'name' => 'غير محدد',
-            'id' => 0
-        ]);
-    }
+    // // علاقة مع الشركة
+    // public function company()
+    // {
+    //     return $this->belongsTo(company::class, 'company_id', 'id')->withDefault([
+    //         'name' => 'غير محدد',
+    //         'id' => 0
+    //     ]);
+    // }
+
+     public function publisher()
+        {
+            return $this->morphTo();
+        }
 
     // علاقة مع الدولة
     public function country()

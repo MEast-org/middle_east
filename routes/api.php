@@ -14,9 +14,14 @@ use App\Http\Controllers\admin\customfield_controller;
 use App\Http\Controllers\admin\jobopportunity_controller;
 use App\Http\Controllers\admin\ads_controller;
 use App\Http\Controllers\admin\auction_controller;
-use App\Http\Controllers\user\user_notification;
+use App\Http\Controllers\admin\slider_controller;
+use App\Http\Controllers\admin\banner_controller;
 use App\Http\Controllers\admin\admin_notification;
+
+use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\user\homepage_controller;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +127,8 @@ Route::group([
     Route::post('/view_opportunity/{id}', [jobopportunity_controller::class, 'view_opportunity']);
     Route::post('/delete_opportunity/{id}', [jobopportunity_controller::class, 'delete_opportunity']);
     Route::post('/company_opportunities/{id}', [jobopportunity_controller::class, 'company_opportunities']);
+    Route::post('/user_opportunities/{id}', [jobopportunity_controller::class, 'user_opportunities']);
+
     Route::post('/country_opportunities/{id}', [jobopportunity_controller::class, 'country_opportunities']);
     Route::post('/category_opportunities/{id}', [jobopportunity_controller::class, 'category_opportunities']);
     Route::post('/region_opportunities/{id}', [jobopportunity_controller::class, 'region_opportunities']);
@@ -149,6 +156,19 @@ Route::group([
     Route::post('/delete_auction/{id}', [auction_controller::class, 'delete_auction']);
     Route::post('/delete_image/{id}', [auction_controller::class, 'delete_image']);
     Route::post('/filter_auction', [auction_controller::class, 'filter_auctions']);
+
+    Route::get('/sliders', [slider_controller::class, 'sliders']);
+    Route::post('/add_slider', [slider_controller::class, 'add_slider']);
+    Route::get('/view_slider/{id}', [slider_controller::class, 'view_slider']);
+    Route::post('/update_slider/{id}', [slider_controller::class, 'update_slider']);
+    Route::get('/delete_slider/{id}', [slider_controller::class, 'delete_slider']);
+
+
+    Route::get('/banners', [banner_controller::class, 'banners']);
+    Route::post('/add_banner', [banner_controller::class, 'add_banner']);
+    Route::get('/view_banner/{id}', [banner_controller::class, 'view_banner']);
+    Route::post('/update_banner/{id}', [banner_controller::class, 'update_banner']);
+    Route::get('/delete_banner/{id}', [banner_controller::class, 'delete_banner']);
 
     Route::post('/send_notification', [admin_notification::class, 'send_notification']);
 
@@ -180,7 +200,7 @@ Route::group([
 
     Route::get('/opportunities', [homepage_controller::class, 'opportunities']);
     Route::get('/opportunities/{id}', [homepage_controller::class, 'view_opportunity']);
-    Route::get('/auction', [homepage_controller::class, 'the_auction']); 
+    Route::get('/auction', [homepage_controller::class, 'the_auction']);
     Route::get('/auction/{id}', [homepage_controller::class, 'view_auction']);
 
 });
