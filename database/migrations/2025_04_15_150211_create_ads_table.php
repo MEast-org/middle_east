@@ -21,6 +21,11 @@ return new class extends Migration
 
              $table->decimal('latitude', 10, 8)->nullable();
              $table->decimal('longitude', 11, 8)->nullable();
+             $table->text('description')->nullable(); //new
+
+             $table->enum('state', ['inactive','active'])->default('active');//new
+             $table->json('social_links')->nullable();//new
+
 
              $table->unsignedInteger('views')->default(0);
              $table->unsignedInteger('shares')->default(0);

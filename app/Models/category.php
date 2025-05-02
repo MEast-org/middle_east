@@ -25,6 +25,11 @@ class category extends Model
         'state' => 'active',
     ];
 
+    public function scopeActive($query)
+    {
+        return $query->where('state', 'active');
+    }
+
     protected static function booted()
     {
         // عند الإنشاء: تعيين sort_order = id (إذا لم يتم تحديده)

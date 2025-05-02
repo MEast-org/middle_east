@@ -44,6 +44,11 @@ class job_opportunity extends Model
         'social_links'=>'array',
     ];
 
+    public function scopeActive($query)
+    {
+        return $query->where('state', 'active');
+    }
+
     // علاقة مع التصنيف
     public function category()
     {

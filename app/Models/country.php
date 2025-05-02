@@ -19,9 +19,10 @@ class country extends Model
         'state'
     ];
 
-    protected $casts = [
-        'state' => 'string'
-    ];
+    public function scopeActive($query)
+    {
+        return $query->where('state', 'active');
+    }
 
     public function regions()
     {

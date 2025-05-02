@@ -87,15 +87,7 @@ public function add_opportunity(Request $request)
         ],
     ]);
 
-    // تنسيق تاريخ البداية لو موجود
-    if (isset($validated['starts_at'])) {
-        $validated['starts_at'] = Carbon::parse($validated['starts_at'])->format('Y-m-d');
-    }
 
-    // تنسيق تاريخ النهاية لو موجود
-    if (isset($validated['expires_at'])) {
-        $validated['expires_at'] = Carbon::parse($validated['expires_at'])->format('Y-m-d');
-    }
 
     // إنشاء فرصة العمل
     $opportunity = job_opportunity::create($validated);
@@ -146,15 +138,6 @@ public function update_opportunity(Request $request, $id)
         ],
     ]);
 
-    // تنسيق تاريخ البداية لو موجود
-    if (isset($validated['starts_at'])) {
-        $validated['starts_at'] = Carbon::parse($validated['starts_at'])->format('Y-m-d');
-    }
-
-    // تنسيق تاريخ النهاية لو موجود
-    if (isset($validated['expires_at'])) {
-        $validated['expires_at'] = Carbon::parse($validated['expires_at'])->format('Y-m-d');
-    }
 
     // تحديث البيانات
     $opportunity->update($validated);

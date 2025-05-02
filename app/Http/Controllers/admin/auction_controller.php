@@ -67,11 +67,10 @@ class auction_controller extends Controller
         'start_date' => 'required|date',
         'end_date' => 'required|date|after_or_equal:start_date',
 
-        'phone' => 'nullable|string',
-        'email' => 'nullable|email',
-        'whatsapp' => 'nullable|string',
        'images' => 'required|array',
         'images.*' => 'required|image|max:2048',
+        'social_links' => 'nullable|array',
+        'social_links.*' => 'nullable|string',
     ]);
 
     DB::beginTransaction();
@@ -86,11 +85,9 @@ class auction_controller extends Controller
             'description' => $validated['description'] ?? null,
             'latitude' => $validated['latitude'] ?? null,
             'longitude' => $validated['longitude'] ?? null,
-            'start_date' => Carbon::parse($validated['start_date'])->format('Y-m-d H:i:s'),
-            'end_date' => Carbon::parse($validated['end_date'])->format('Y-m-d H:i:s'),
-            'phone' => $validated['phone'] ?? null,
-            'email' => $validated['email'] ?? null,
-            'whatsapp' => $validated['whatsapp'] ?? null,
+            'start_date' => $validated['start_date'],
+            'end_date' =>$validated['end_date'],
+            'social_links'=> $validated['social_links'] ?? null,
             'status' => 'pending',
         ]);
 
@@ -148,14 +145,11 @@ public function update_auction(Request $request, $id)
         'start_date' => 'sometimes|required|date',
         'end_date' => 'sometimes|required|date|after_or_equal:start_date',
         'status' => 'sometimes|required|in:pending,active,completed,expired',
-
-        'phone' => 'sometimes|nullable|string',
-        'email' => 'sometimes|nullable|email',
-        'whatsapp' => 'sometimes|nullable|string',
-
-
         'images' => 'sometimes|array',
         'images.*' => 'sometimes|image|max:2048',
+
+        'social_links' => 'sometimes|nullable|array',
+        'social_links.*' => 'nullable|string',
     ]);
 
     if ($validator->fails()) {
@@ -164,14 +158,8 @@ public function update_auction(Request $request, $id)
 
     $validated = $validator->validated();
 
-    // لو تم تعديل التواريخ، نحولهم إلى الصيغة الصحيحة
-    if (isset($validated['start_date'])) {
-        $validated['start_date'] = Carbon::parse($validated['start_date'])->format('Y-m-d H:i:s');
-    }
-    if (isset($validated['end_date'])) {
-        $validated['end_date'] = Carbon::parse($validated['end_date'])->format('Y-m-d H:i:s');
-    }
-
+    DB::beginTransaction();
+    try{
     // تحديث بيانات المزاد
     $auction->update($validated);
 
@@ -184,12 +172,18 @@ public function update_auction(Request $request, $id)
             ]);
         }
     }
+            DB::commit();
+            return response()->json([
+                'message' => 'Auction updated successfully.',
+                'auction' => $auction->load('images'),
+            ]);
 
-    return response()->json([
-        'message' => 'Auction updated successfully.',
-        'auction' => $auction->load('images'),
-    ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to create auction', 'details' => $e->getMessage()], 500);
+        }
 }
+
 
 
     public function delete_auction($id)

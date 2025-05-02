@@ -27,11 +27,9 @@ return new class extends Migration
             $table->timestamp('end_date')->nullable();
 
             $table->enum('status', [ 'pending','active', 'completed', 'expired'])->default('pending');
+            $table->json('social_links')->nullable();//new
 
 
-            $table->string('phone')->nullable();
-            $table->string('email')->nullable();
-            $table->string('whatsapp')->nullable();
 
             $table->timestamps();
         });

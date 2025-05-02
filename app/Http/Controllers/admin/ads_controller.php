@@ -69,6 +69,9 @@ class ads_controller extends Controller
             'category_id' => 'required|exists:categories,id',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'description' => 'nullable|string',
+            'social_links' => 'nullable|array',
+            'social_links.*' => 'nullable|string',
             'views' => 'nullable|integer',
             'shares' => 'nullable|integer',
         ]);
@@ -99,6 +102,11 @@ class ads_controller extends Controller
             'category_id' => 'sometimes|required|exists:categories,id',
             'latitude' => 'sometimes|nullable|numeric',
             'longitude' => 'sometimes|nullable|numeric',
+            'description' => 'sometimes|nullable|string',
+            'social_links' => 'sometimes|nullable|array',
+            'social_links.*' => 'nullable|string',
+
+            'state' => 'sometimes|required|in:inactive,active',
             'views' => 'sometimes|nullable|integer',
             'shares' => 'sometimes|nullable|integer',
         ]);

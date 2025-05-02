@@ -21,11 +21,21 @@ class auction extends Model
         'end_date',
         'publisher_id',
         'publisher_type',
-        'phone',
-        'email',
-        'whatsapp',
+        'social_links',
         'status',
     ];
+
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'social_links'=>'array'
+    ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
 
 
     public function images()

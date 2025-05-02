@@ -20,6 +20,8 @@ use App\Http\Controllers\admin\admin_notification;
 
 use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\user\homepage_controller;
+use App\Http\Controllers\user\user_opportunity_controller;
+use App\Http\Controllers\user\user_auction_controller;
 
 
 
@@ -184,6 +186,21 @@ Route::group([
 ], function ($router) {//view_admin,update_profile,profile,logout,view_admin,
     Route::post('/saveFcmToken', [user_notification::class, 'saveFcmToken']);
 
+    Route::get('/my_opportunities', [user_opportunity_controller::class, 'my_opportunities']);
+    Route::get('/my_opportunities/{id}', [user_opportunity_controller::class, 'my_opportunity']);
+    Route::post('/add_opportunity', [user_opportunity_controller::class, 'add_opportunity']);
+    Route::post('/update_opportunity/{id}', [user_opportunity_controller::class, 'update_opportunity']);
+    Route::get('/delete_opportunity/{id}', [user_opportunity_controller::class, 'delete_opportunity']);
+
+
+    Route::get('/my_auctions', [user_auction_controller::class, 'my_auctions']);
+    Route::get('/my_auctions/{id}', [user_auction_controller::class, 'my_auction']);
+    Route::post('/add_auction', [user_auction_controller::class, 'add_auction']);
+    Route::post('/update_auction/{id}', [user_auction_controller::class, 'update_auction']);
+    Route::get('/delete_auction/{id}', [user_auction_controller::class, 'delete_auction']);
+    Route::get('/delete_image/{id}', [user_auction_controller::class, 'delete_image']);
+
+
 });
 
 
@@ -202,6 +219,9 @@ Route::group([
     Route::get('/opportunities/{id}', [homepage_controller::class, 'view_opportunity']);
     Route::get('/auction', [homepage_controller::class, 'the_auction']);
     Route::get('/auction/{id}', [homepage_controller::class, 'view_auction']);
+
+    Route::get('/sliders', [homepage_controller::class, 'sliders']);
+    Route::get('/banners', [homepage_controller::class, 'banners']);
 
 });
 

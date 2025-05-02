@@ -9,6 +9,9 @@ use App\Models\country;
 use App\Models\category;
 use App\Models\region;
 
+use App\Models\slider;
+use App\Models\banner;
+
 use App\Models\ads;
 use App\Models\job_opportunity;
 use App\Models\auction;
@@ -19,7 +22,7 @@ class homepage_controller extends Controller
 
     public function countries()
 {
-    $countries = country::where('state', 'active')->select('id', 'en_name','ar_name')->get(); // بدون with('regions')
+    $countries = country::active()->select('id', 'en_name','ar_name')->get(); // بدون with('regions')
     return ResponseHelper::success('all country', $countries);
 }
 public function countryRegions($id)
@@ -37,11 +40,9 @@ public function countryRegions($id)
 
 public function parentCategories()
 {
-    $categories = category::where('state', 'active')->whereIsRoot()->get(); // from nestedset package
+    $categories = category::active()->whereIsRoot()->get(); // from nestedset package
     return ResponseHelper::success('the category parents ', $categories);
 }
-
-
 
 
 public function all_ads(Request $request)
@@ -49,7 +50,6 @@ public function all_ads(Request $request)
     $query = ads::with([
         'publisher',
         'fieldvalues.field'
-
     ]);
 
     if ($request->filled('country_id')) {
@@ -63,19 +63,26 @@ public function all_ads(Request $request)
     if ($request->filled('category_id')) {
         $category = category::find($request->category_id);
         if ($category) {
-            $categoryIds =category::descendantsAndSelf($request->category_id)->pluck('id')->toArray();
+            $categoryIds = category::descendantsAndSelf($request->category_id)->pluck('id')->toArray();
             $query->whereIn('category_id', $categoryIds);
         }
     }
 
-    $ads = $query->latest()->paginate(10);
+    // ترتيب حسب المشاهدات أو الأحدث
+    if ($request->boolean('views')) {
+        $query->orderByDesc('views');
+    } else {
+        $query->latest();
+    }
+
+    $ads = $query->active()->paginate($request->get('page_size', 10));
 
     return ResponseHelper::success('Ads retrieved successfully', $ads);
 }
 
 public function view_ad($id)
 {
-    $ad = ads::with(['country', 'region', 'category.ancestors', 'publisher', 'fieldvalues.field'])
+    $ad = ads::with(['publisher','country', 'region', 'category.ancestors', 'fieldvalues.field'])
         ->find($id);
 
     if (!$ad) {
@@ -94,7 +101,7 @@ public function view_ad($id)
 public function opportunities(Request $request)
 {
     $query = job_opportunity::with([
-        'company',
+        'publisher',
         'fieldvalues.field'
     ]);
 
@@ -114,14 +121,16 @@ public function opportunities(Request $request)
         }
     }
 
-    $opportunities = $query->latest()->paginate(10);
+    $opportunities = $query->active()->latest()->paginate($request->get('page_size',10));
 
     return ResponseHelper::success('Opportunities retrieved successfully', $opportunities);
 }
 
+
+
 public function view_opportunity($id)
 {
-    $opportunity = job_opportunity::with(['company', 'category.ancestors', 'country', 'region', 'fieldvalues.field'])
+    $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region', 'fieldvalues.field'])
         ->find($id);
 
     if (!$opportunity) {
@@ -135,7 +144,7 @@ public function view_opportunity($id)
 
 public function the_auction()
 {
-    $auction = auction::where('status', 'active')->latest()->first();
+    $auction = auction::active()->latest()->first();
     if (!$auction) {
         return ResponseHelper::error('not found an active auction', null, 404);
 
@@ -157,6 +166,24 @@ public function view_auction($id)
     }
     return ResponseHelper::success('auction retrieved successfully', $auction);
 
+}
+
+public function sliders()
+{
+    $sliders = slider::latest()
+        ->get()
+        ->makeHidden(['created_at', 'updated_at']);
+
+    return ResponseHelper::success('Sliders retrieved successfully', $sliders);
+}
+
+public function banners()
+{
+    $banners = banner::latest()
+        ->get()
+        ->makeHidden(['created_at', 'updated_at']);
+
+    return ResponseHelper::success('Banners retrieved successfully', $banners);
 }
 
 

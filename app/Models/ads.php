@@ -19,7 +19,23 @@ class ads extends Model
         'longitude',
         'views',
         'shares',
+        'state',
+        'description',
+        'social_links'
+
     ];
+    protected $attributes = [
+        'views' => 0,
+        'shares' => 0,
+    ];
+    protected $casts = [
+        'social_links'=>'array',
+    ];
+
+        public function scopeActive($query)
+    {
+        return $query->where('state', 'active');
+    }
 
     public function publisher()
     {
