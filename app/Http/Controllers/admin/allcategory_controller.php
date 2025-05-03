@@ -24,14 +24,14 @@ class allcategory_controller extends Controller
 
     public function categoryTree()
     {
-        $categories = Category::defaultOrder()->get()->toTree();
+        $categories = category::defaultOrder()->get()->toTree();
         return response()->json(['allCategories'=>$categories]);
     }
 
     public function orderdcategoryTree()
     {
             // الحصول على الشجرة كاملة مع الترتيب
-            $tree = Category::query()
+            $tree = category::query()
             ->orderBy('sort_order', 'asc') // الفرز أولاً
             ->get()
             ->toTree();
@@ -86,9 +86,9 @@ class allcategory_controller extends Controller
             'id' => 'required|exists:categories,id',
         ]);
 
-        $category = Category::findOrFail($request->id);
+        $category = category::findOrFail($request->id);
 
-        $category = Category::with([
+        $category = category::with([
             'parent',
             'children' => function($query) {
                 $query->orderBy('sort_order', 'asc');
@@ -103,7 +103,7 @@ class allcategory_controller extends Controller
     public function update_categoryTree(Request $request)
     {
 
-        $category = Category::findOrFail($request->id);
+        $category = category::findOrFail($request->id);
 
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:categories,id',
@@ -136,7 +136,7 @@ class allcategory_controller extends Controller
         // تغيير الوالد إذا طُلب
         if ($request->has('parent_id') && $request->parent_id != $category->parent_id) {
             if ($request->parent_id) {
-                $newParent = Category::find($request->parent_id);
+                $newParent = category::find($request->parent_id);
                 $category->appendToNode($newParent)->save();
             } else {
                 $category->makeRoot()->save();
@@ -157,7 +157,7 @@ class allcategory_controller extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:categories,id',
         ]);
-        $category = Category::findOrFail($request->id);
+        $category = category::findOrFail($request->id);
 
         // حذف الصورة إذا كانت فئة رئيسية
         if ($category->icon) {
@@ -177,11 +177,11 @@ class allcategory_controller extends Controller
         'new_order' => 'required|integer|min:1' // تغيير الحد الأدنى إلى 1 بدلاً من 0
     ]);
 
-    $category = Category::findOrFail($request->id);
+    $category = category::findOrFail($request->id);
     $parentId = $category->parent_id;
 
     // الحصول على الأشقاء في نفس المستوى مع الترتيب الحالي
-    $siblings = Category::where('parent_id', $parentId)
+    $siblings = category::where('parent_id', $parentId)
                       ->where('id', '!=', $category->id)
                       ->orderBy('sort_order')
                       ->get();

@@ -142,7 +142,7 @@ class admin_controller extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $admin = Admin::find($request->id);
+        $admin = admin::find($request->id);
         if (!$admin) {
             return response()->json(['message' => 'Provider not found'], 404);
         }
@@ -177,7 +177,7 @@ class admin_controller extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $admin = Admin::find($request->id);
+        $admin = admin::find($request->id);
         if (!$admin) {
             return response()->json(['error' => 'Admin not found'], 404);
         }
@@ -225,7 +225,7 @@ class admin_controller extends Controller
             'id'=>'required',
         ]);
 
-        $admin = Admin::find($request->id);
+        $admin = admin::find($request->id);
         if (!$admin) {
             return response()->json(['error' => 'Admin not found'], 404);
         }

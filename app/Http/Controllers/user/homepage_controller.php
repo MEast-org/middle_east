@@ -28,7 +28,7 @@ class homepage_controller extends Controller
 }
 public function countryRegions($id)
 {
-    $country = Country::find($id);
+    $country = country::find($id);
 
     if (!$country) {
         return ResponseHelper::error('not exist ', null, 404);

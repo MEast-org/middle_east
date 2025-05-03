@@ -40,7 +40,7 @@ public function countries_state()
         return response()->json($validator->errors(), 400);
     }
 
-    $query = Country::with('regions');
+    $query = country::with('regions');
 
     if (request()->has('state')) {
         $query->where('state', request()->state);
@@ -214,7 +214,7 @@ public function country_regions(Request $request)
 
 public function regions()
 {
-    $regions = Region::with('country')->get();
+    $regions = region::with('country')->get();
     return response()->json($regions);
 }
 
@@ -233,7 +233,7 @@ public function add_region(Request $request)
         return response()->json($validator->errors(), 400);
     }
 
-    $region = Region::create($validator->validated());
+    $region = region::create($validator->validated());
 
     return response()->json([
         'message' => 'Region successfully created',
@@ -254,7 +254,7 @@ public function view_region(Request $request)
         return response()->json($validator->errors(), 400);
     }
 
-    $region = Region::with('country')->find($request->id);
+    $region = region::with('country')->find($request->id);
 
     return response()->json([
         'region' => $region,
@@ -276,7 +276,7 @@ public function update_region(Request $request)
         return response()->json($validator->errors(), 400);
     }
 
-    $region = Region::find($request->id);
+    $region = region::find($request->id);
     $region->update($validator->validated());
 
     return response()->json([
@@ -298,7 +298,7 @@ public function delete_region(Request $request)
         return response()->json($validator->errors(), 400);
     }
 
-    Region::find($request->id)->delete();
+    region::find($request->id)->delete();
 
     return response()->json([
         'success' => true,

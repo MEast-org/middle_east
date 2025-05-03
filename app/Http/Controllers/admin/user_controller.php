@@ -156,7 +156,7 @@ public function filter_users(Request $request)
 {
     $search = $request->search;
 
-    $query = user::with(['country', 'region']);
+    $query = User::with(['country', 'region']);
 
     if ($search) {
         $query->where(function($q) use ($search) {

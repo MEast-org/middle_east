@@ -188,7 +188,7 @@ public function update_auction(Request $request, $id)
 
     public function delete_auction($id)
     {
-        $auction = Auction::find($id);
+        $auction = auction::find($id);
         if (!$auction) {
             return response()->json(['error' => 'Auction not found'], 404);
         }

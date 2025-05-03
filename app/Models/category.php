@@ -81,7 +81,7 @@ class category extends Model
      {
          return $this->hasManyThrough(
             custom_field_value::class,
-             Custom_field::class
+             custom_field::class
          );
         }
 

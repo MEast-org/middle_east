@@ -81,7 +81,7 @@ public function updateUserProfile(Request $request)
         if ($user->photo && Storage::disk('public')->exists($user->photo)) {
             Storage::disk('public')->delete($user->photo);
         }
-        $validated['photo'] = $request->file('photo')->store('users', 'public');
+        $validated['photo'] = $request->file('photo')->store('photos', 'public');
     }
 
     $user->update($validated);
@@ -115,7 +115,7 @@ public function send_reset_code(Request $request)
     $code = rand(100000, 999999);
     $user->update([
         'verification_code' => '123456',
-        'code_expires_at' => now()->addMinutes(10)
+        'code_expires_at' => now()->addMinutes(60)
     ]);
 
     // يُفضل إرسال الكود عبر البريد هنا
