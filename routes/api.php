@@ -16,12 +16,17 @@ use App\Http\Controllers\admin\ads_controller;
 use App\Http\Controllers\admin\auction_controller;
 use App\Http\Controllers\admin\slider_controller;
 use App\Http\Controllers\admin\banner_controller;
+use App\Http\Controllers\admin\contactinfo_controller;
 use App\Http\Controllers\admin\admin_notification;
+use App\Http\Controllers\admin\statistics_controller;
+
 
 use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\user\homepage_controller;
 use App\Http\Controllers\user\user_opportunity_controller;
 use App\Http\Controllers\user\user_auction_controller;
+use App\Http\Controllers\user\auth_company_controller;
+use App\Http\Controllers\user\auth_user_controller;
 
 
 
@@ -172,6 +177,13 @@ Route::group([
     Route::post('/update_banner/{id}', [banner_controller::class, 'update_banner']);
     Route::get('/delete_banner/{id}', [banner_controller::class, 'delete_banner']);
 
+    Route::get('/contacts', [contactinfo_controller::class, 'contacts']);
+    Route::post('/add_contact', [contactinfo_controller::class, 'add_contact']);
+    Route::post('/add_contacts', [contactinfo_controller::class, 'add_contacts']);
+    Route::post('/update_contact/{id}', [contactinfo_controller::class, 'update_contact']);
+    Route::get('/delete_contact/{id}', [contactinfo_controller::class, 'delete_contact']);
+
+    Route::post('/statistics', [statistics_controller::class, 'statistics']);
     Route::post('/send_notification', [admin_notification::class, 'send_notification']);
 
 
@@ -184,7 +196,20 @@ Route::group([
 Route::group([
     'prefix' => 'user'
 ], function ($router) {//view_admin,update_profile,profile,logout,view_admin,
+
+    Route::post('/register_company', [auth_company_controller::class, 'register_company']);
+    Route::post('/updateCompanyProfile', [auth_company_controller::class, 'updateCompanyProfile']);
+
+    Route::post('/register_user', [auth_user_controller::class, 'register_user']);
+    Route::post('/updateUserProfile', [auth_user_controller::class, 'updateUserProfile']);
+    Route::get('/profile', [auth_user_controller::class, 'profile']);
+    Route::get('/logout', [auth_user_controller::class, 'logout']);
+    Route::post('/send_code', [auth_user_controller::class, 'send_reset_code']);
+    Route::post('/reset_password', [auth_user_controller::class, 'reset_password']);
+
     Route::post('/saveFcmToken', [user_notification::class, 'saveFcmToken']);
+
+
 
     Route::get('/my_opportunities', [user_opportunity_controller::class, 'my_opportunities']);
     Route::get('/my_opportunities/{id}', [user_opportunity_controller::class, 'my_opportunity']);
@@ -211,6 +236,8 @@ Route::group([
     Route::get('/countries', [homepage_controller::class, 'countries']);
     Route::get('countryRegions/{id}',[homepage_controller::class, 'countryRegions']);
     Route::get('parentCategories',[homepage_controller::class, 'parentCategories']);
+    Route::get('/categoryTree', [homepage_controller::class, 'categoryTree']);
+    Route::get('/contacts', [homepage_controller::class, 'contacts']);
 
     Route::get('/ads', [homepage_controller::class, 'all_ads']);
     Route::get('/ads/{id}', [homepage_controller::class, 'view_ad']);

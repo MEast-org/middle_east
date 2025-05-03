@@ -15,6 +15,7 @@ use App\Models\banner;
 use App\Models\ads;
 use App\Models\job_opportunity;
 use App\Models\auction;
+use App\Models\contact_info;
 
 
 class homepage_controller extends Controller
@@ -43,6 +44,18 @@ public function parentCategories()
     $categories = category::active()->whereIsRoot()->get(); // from nestedset package
     return ResponseHelper::success('the category parents ', $categories);
 }
+
+public function categoryTree()
+{
+    $categories = category::active()->select('id', 'en_name','ar_name','icon')->defaultOrder()->get()->toTree();
+    return ResponseHelper::success('categoryTree', $categories);
+}
+
+public function contacts()
+    {
+        $infos = contact_info::latest()->get(['id', 'platform', 'link']);
+        return ResponseHelper::success('Contact info list', $infos);
+    }
 
 
 public function all_ads(Request $request)
