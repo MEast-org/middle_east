@@ -124,6 +124,7 @@ public function update_opportunity(Request $request, $id)
 
         'social_links' => 'sometimes|nullable|array',
         'social_links.*' => 'nullable|string',
+        'state' => 'sometimes|required|in:inactive,active',
 
         'publisher_type' => 'sometimes|required|in:user,company',
         'publisher_id' => [
@@ -151,7 +152,7 @@ public function update_opportunity(Request $request, $id)
 
 
     // حذف فرصة
-    public function delelet_opportunity($id)
+    public function delete_opportunity($id)
     {
 
         job_opportunity::findOrFail($id)->delete();

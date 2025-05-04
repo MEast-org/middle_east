@@ -72,8 +72,6 @@ class ads_controller extends Controller
             'description' => 'nullable|string',
             'social_links' => 'nullable|array',
             'social_links.*' => 'nullable|string',
-            'views' => 'nullable|integer',
-            'shares' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -107,8 +105,6 @@ class ads_controller extends Controller
             'social_links.*' => 'nullable|string',
 
             'state' => 'sometimes|required|in:inactive,active',
-            'views' => 'sometimes|nullable|integer',
-            'shares' => 'sometimes|nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -127,8 +123,7 @@ class ads_controller extends Controller
                 // حذف القيم المرتبطة بالفئة القديمة
                 $oldFieldIds =custom_field::where('category_id', $oldCategoryId)->pluck('id');
 
-                custom_field_value::where('owner_table_type', 'ads')
-                    ->where('owner_table_id', $ad->id)
+                custom_field_value::where('ad_id', $ad->id)
                     ->whereIn('custom_field_id', $oldFieldIds)
                     ->delete();
             }

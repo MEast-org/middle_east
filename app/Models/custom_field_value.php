@@ -11,8 +11,7 @@ class custom_field_value extends Model
 
     protected $fillable = [
         'custom_field_id',
-        'owner_table_type',
-        'owner_table_id',
+       'ad_id',
         'value',
         'file_path'
     ];
@@ -31,9 +30,14 @@ class custom_field_value extends Model
     //      return $this->belongsTo(job_opportunity::class , 'opportunity_id' , 'id');
     //  }
 
-    public function owner_table()
+    // public function owner_table()
+    // {
+    //     return $this->morphTo();
+    // }
+
+    public function ad()
     {
-        return $this->morphTo();
+        return $this->belongsTo(ads::class,'ad_id','id');
     }
 
      // للوصول للفئة عبر الحقل المخصص

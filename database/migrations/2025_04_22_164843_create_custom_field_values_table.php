@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
 
             // إضافة الحقلين للمورف
-            $table->morphs('owner_table');
+           // $table->morphs('owner_table');
+            $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');
 
             $table->foreignId('custom_field_id')->constrained()->onDelete('cascade');
             $table->json('value')->nullable();

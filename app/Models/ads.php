@@ -60,15 +60,21 @@ class ads extends Model
         return $this->belongsTo(category::class,'category_id','id');
     }
 
+    // public function fieldvalues()
+    // {
+    //     return $this->morphMany(custom_field_value::class, 'owner_table');
+    // }
+
+
     public function fieldvalues()
     {
-        return $this->morphMany(custom_field_value::class, 'owner_table');
+        return $this->hasMany(custom_field_value::class,'ad_id','id');
     }
+
         protected static function booted()
     {
         static::deleting(function ($ad) {
-            custom_field_value::where('owner_table_type', 'ads')
-                ->where('owner_table_id', $ad->id)
+            custom_field_value::where('ad_id', $ad->id)
                 ->delete();
         });
     }
