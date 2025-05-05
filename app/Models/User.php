@@ -81,6 +81,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->morphMany(auction::class, 'publisher');
     }
 
+        public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favoriter');
+    }
+
 
     // Methods for JWT
     public function getJWTIdentifier()

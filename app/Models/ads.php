@@ -71,6 +71,11 @@ class ads extends Model
         return $this->hasMany(custom_field_value::class,'ad_id','id');
     }
 
+        public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favorable');
+    }
+
         protected static function booted()
     {
         static::deleting(function ($ad) {

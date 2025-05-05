@@ -78,4 +78,9 @@ class company extends Authenticatable implements JWTSubject
         return $this->morphMany(auction::class, 'publisher');
     }
 
+        public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favoriter');
+    }
+
 }

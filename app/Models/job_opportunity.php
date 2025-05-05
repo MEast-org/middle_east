@@ -72,6 +72,11 @@ class job_opportunity extends Model
             return $this->morphTo();
         }
 
+        public function favorites()
+        {
+            return $this->morphMany(favorite::class, 'favorable');
+        }
+
     // علاقة مع الدولة
     public function country()
     {
