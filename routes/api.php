@@ -17,6 +17,7 @@ use App\Http\Controllers\admin\auction_controller;
 use App\Http\Controllers\admin\slider_controller;
 use App\Http\Controllers\admin\banner_controller;
 use App\Http\Controllers\admin\contactinfo_controller;
+use App\Http\Controllers\admin\policyTerms_controller;
 use App\Http\Controllers\admin\admin_notification;
 use App\Http\Controllers\admin\statistics_controller;
 
@@ -27,6 +28,7 @@ use App\Http\Controllers\user\user_opportunity_controller;
 use App\Http\Controllers\user\user_auction_controller;
 use App\Http\Controllers\user\auth_company_controller;
 use App\Http\Controllers\user\auth_user_controller;
+use App\Http\Controllers\user\favorite_controller;
 
 
 
@@ -133,6 +135,8 @@ Route::group([
     Route::post('/update_opportunity/{id}', [jobopportunity_controller::class, 'update_opportunity']);
     Route::post('/view_opportunity/{id}', [jobopportunity_controller::class, 'view_opportunity']);
     Route::post('/delete_opportunity/{id}', [jobopportunity_controller::class, 'delete_opportunity']);
+    Route::post('/filter_jobs', [jobopportunity_controller::class, 'filter_jobs']);
+
     Route::post('/company_opportunities/{id}', [jobopportunity_controller::class, 'company_opportunities']);
     Route::post('/user_opportunities/{id}', [jobopportunity_controller::class, 'user_opportunities']);
 
@@ -183,7 +187,14 @@ Route::group([
     Route::post('/update_contact/{id}', [contactinfo_controller::class, 'update_contact']);
     Route::get('/delete_contact/{id}', [contactinfo_controller::class, 'delete_contact']);
 
+    Route::get('/policyTerms', [policyTerms_controller::class, 'index']); // عرض الكل
+    Route::get('/view_policyTerms/{key}/{locale}', [policyTerms_controller::class, 'show']); // عرض حسب المفتاح واللغة
+    Route::post('/add_policyTerms', [policyTerms_controller::class, 'store']); // إنشاء
+    Route::post('/update_policyTerms/{id}', [policyTerms_controller::class, 'update']); // تعديل
+    Route::get('/delete_policyTerms/{id}', [policyTerms_controller::class, 'destroy']); // حذف
+
     Route::post('/statistics', [statistics_controller::class, 'statistics']);
+    Route::get('/AnalyticsCategory', [statistics_controller::class, 'AnalyticsCategory']);
     Route::post('/send_notification', [admin_notification::class, 'send_notification']);
 
 
@@ -225,7 +236,9 @@ Route::group([
     Route::get('/delete_auction/{id}', [user_auction_controller::class, 'delete_auction']);
     Route::get('/delete_image/{id}', [user_auction_controller::class, 'delete_image']);
 
-
+    Route::post('/add_favorite', [favorite_controller::class, 'add']);
+    Route::get('/remove_favorite/{id}', [favorite_controller::class, 'remove']);
+    Route::get('/my_favorites', [favorite_controller::class, 'list']);
 });
 
 

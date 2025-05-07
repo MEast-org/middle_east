@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\ads;
 use App\Models\auction;
 use App\Helpers\ResponseHelper;
+use Illuminate\Support\Facades\DB;
 
 class statistics_controller extends Controller
 {
@@ -96,5 +97,35 @@ class statistics_controller extends Controller
 
         return ResponseHelper::success('Statistics retrieved successfully', $data);
     }
+
+            public function AnalyticsCategory()
+        {
+            $parentCategories = category::whereNull('parent_id')->get();
+
+            $result = $parentCategories->map(function ($parent) {
+                // جلب جميع الأبناء بما فيهم هو نفسه
+                $categoryIds = category::where('parent_id', $parent->id)
+                                ->pluck('id')->push($parent->id);
+
+                return [
+                    'category_en' => $parent->en_name,
+                    'category_ar' => $parent->ar_name,
+                    'ads_count' => DB::table('ads')
+                        ->whereIn('category_id', $categoryIds)
+                        ->count(),
+                    'auctions_count' => DB::table('auctions')
+                        ->whereIn('category_id', $categoryIds)
+                        ->count(),
+                    'jobs_count' => DB::table('job_opportunities')
+                        ->whereIn('category_id', $categoryIds)
+                        ->count(),
+                ];
+            });
+
+            return ResponseHelper::success('analyitics retrieved successfully', $result);
+
+
+
+        }
 
 }

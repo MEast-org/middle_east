@@ -215,7 +215,11 @@ public function filter_auctions(Request $request)
     }
 
     if ($request->filled('category_id')) {
-        $query->where('category_id', $request->category_id);
+        $category = category::find($request->category_id);
+        if ($category) {
+            $categoryIds = category::descendantsAndSelf($request->category_id)->pluck('id')->toArray();
+            $query->whereIn('category_id', $categoryIds);
+        }
     }
 
     if ($request->filled('region_id')) {
