@@ -75,6 +75,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->morphMany(job_opportunity::class, 'publisher');
     }
+       //فرص العمل التي قدمت عليهم
+        public function applications()
+    {
+        return $this->morphMany(applicant::class, 'applicant');
+    }
 
     public function auctions()
     {

@@ -92,7 +92,7 @@ class admin_controller extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $admins = Admin::all();
+        $admins = admin::all();
         return response()->json($admins);
     }
 
@@ -115,7 +115,7 @@ class admin_controller extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $admin = Admin::create(array_merge(
+        $admin = admin::create(array_merge(
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));

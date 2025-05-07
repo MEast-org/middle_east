@@ -228,6 +228,14 @@ Route::group([
     Route::post('/update_opportunity/{id}', [user_opportunity_controller::class, 'update_opportunity']);
     Route::get('/delete_opportunity/{id}', [user_opportunity_controller::class, 'delete_opportunity']);
 
+    Route::post('/apply_opportunity', [user_opportunity_controller::class, 'apply']);
+    Route::get('/my_applications', [user_opportunity_controller::class, 'myApplications']);
+
+
+
+
+
+
 
     Route::get('/my_auctions', [user_auction_controller::class, 'my_auctions']);
     Route::get('/my_auctions/{id}', [user_auction_controller::class, 'my_auction']);
@@ -251,6 +259,8 @@ Route::group([
     Route::get('parentCategories',[homepage_controller::class, 'parentCategories']);
     Route::get('/categoryTree', [homepage_controller::class, 'categoryTree']);
     Route::get('/contacts', [homepage_controller::class, 'contacts']);
+    Route::get('/policyTerms', [homepage_controller::class, 'policyTerms']);
+    Route::get('/view_policyTerms/{key}/{locale}', [homepage_controller::class, 'view_policyTerms']);
 
     Route::get('/ads', [homepage_controller::class, 'all_ads']);
     Route::get('/ads/{id}', [homepage_controller::class, 'view_ad']);

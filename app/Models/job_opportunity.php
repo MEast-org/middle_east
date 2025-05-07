@@ -94,14 +94,10 @@ class job_opportunity extends Model
             'id' => 0
         ]);
     }
-    // public function fieldvalues()
-    // {
-    //     return $this->hasMany(custom_field_value::class, 'opportunity_id', 'id');
-    // }
 
-        public function fieldvalues()
+    public function applications()
     {
-        return $this->morphMany(custom_field_value::class, 'owner_table');
+        return $this->hasMany(applicant::class, 'opportunity_id');
     }
 
     // زيادة عدد المشاهدات
