@@ -26,6 +26,7 @@ use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\user\homepage_controller;
 use App\Http\Controllers\user\user_opportunity_controller;
 use App\Http\Controllers\user\user_auction_controller;
+use App\Http\Controllers\user\user_ads_controller;
 use App\Http\Controllers\user\auth_company_controller;
 use App\Http\Controllers\user\auth_user_controller;
 use App\Http\Controllers\user\favorite_controller;
@@ -230,6 +231,12 @@ Route::group([
 
     Route::post('/apply_opportunity', [user_opportunity_controller::class, 'apply']);
     Route::get('/my_applications', [user_opportunity_controller::class, 'myApplications']);
+
+    Route::get('/my_ads', [user_ads_controller::class, 'my_ads']);
+    Route::get('my_ads/{id}', [user_ads_controller::class, 'show_ad']);
+    Route::post('/add_ad', [user_ads_controller::class, 'add_ad']);
+    Route::post('update_ad/{id}', [user_ads_controller::class, 'update_ad']);
+    Route::get('delete_ad/{id}', [user_ads_controller::class, 'delete_ad']);
 
 
 

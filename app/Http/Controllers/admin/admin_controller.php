@@ -108,7 +108,7 @@ class admin_controller extends Controller
             'email' => 'required|string|email|max:100|unique:admins',
             'password' => 'required|string|min:8',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'role' => 'required|in:super_admin,admin'
+            'role' => 'required|in:super_admin,admin,coinRole',
         ]);
 
         if ($validator->fails()) {
@@ -166,7 +166,7 @@ class admin_controller extends Controller
             'email' => 'sometimes|required|string|email|max:100|unique:admins,email,'.$request->id,
             'password' => 'sometimes|required|string|min:8',
             'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'role' => 'sometimes|required|in:super_admin,admin'
+            'role' => 'sometimes|required|in:super_admin,admin,coinRole'
         ]);
 
         if ($validator->fails()) {

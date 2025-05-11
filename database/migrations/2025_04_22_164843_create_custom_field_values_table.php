@@ -20,7 +20,6 @@ return new class extends Migration
 
             $table->foreignId('custom_field_id')->constrained()->onDelete('cascade');
             $table->json('value')->nullable();
-            $table->string('file_path')->nullable();
             $table->timestamps();
         });
 

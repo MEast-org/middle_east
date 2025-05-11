@@ -91,7 +91,8 @@ public function update_user(Request $request)
         'birthday' => 'sometimes|nullable|date_format:Y-m-d',
         'country_id' => 'sometimes|nullable|exists:countries,id',
         'region_id' => 'sometimes|nullable|exists:regions,id',
-        'photo' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        'photo' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'state' => 'sometimes|required|in:inactive,active',
     ]);
 
     if ($validator->fails()) {

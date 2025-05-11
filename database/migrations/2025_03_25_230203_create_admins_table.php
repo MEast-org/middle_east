@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('image')->nullable();
-            $table->enum('role', ['super_admin', 'admin'])->default('admin');
+            // $table->enum('role', ['super_admin', 'admin'])->default('admin');
+            $table->string('role')->default('admin');
             $table->string('fcm_token')->nullable();
             $table->timestamps();
         });

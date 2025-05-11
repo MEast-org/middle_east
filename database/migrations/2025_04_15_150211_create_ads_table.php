@@ -26,7 +26,8 @@ return new class extends Migration
              $table->enum('state', ['inactive','active'])->default('active');//new
              $table->json('social_links')->nullable();//new
 
-
+             $table->decimal('price', 10, 2)->nullable();
+             
              $table->unsignedInteger('views')->default(0);
              $table->unsignedInteger('shares')->default(0);
              $table->timestamps();

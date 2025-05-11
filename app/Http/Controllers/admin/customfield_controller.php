@@ -17,7 +17,7 @@ use App\Models\category;
 class customfield_controller extends Controller
 {
 
-      /**
+      /**  
      * Create a new AuthController instance.
      *
      * @return void
@@ -207,16 +207,6 @@ class customfield_controller extends Controller
                         }
                         $valueToStore = $path;
                     }
-                // } elseif ($type === 'checkbox') {
-                //     $valueArray = is_array($inputValue) ? $inputValue : $inputValue;
-                //     if ($isRequired && empty($valueArray)) {
-                //         return response()->json([
-                //             'status' => false,
-                //             'message' => "{$customField->en_name} is required"
-                //         ], 422);
-                //     }
-                //     $valueToStore = $valueArray;
-
             } elseif ($type === 'checkbox') {
                 // لو كانت القيمة سلسلة JSON نُحولها
                 if (is_string($inputValue)) {
@@ -271,110 +261,4 @@ class customfield_controller extends Controller
             ]);
         }
 
-
-
-// public function addupdate_fieldvalue(Request $request)
-// {
-//     $validator = Validator::make($request->all(), [
-//         'ad_id' => 'required|exists:ads,id',
-//         'fields' => 'required|array',
-//     ]);
-
-//     if ($validator->fails()) {
-//         return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
-//     }
-
-//     $adId = $request->input('ad_id');
-//     $fields = $request->input('fields', []);
-
-//     // دمج الملفات مع الحقول
-//     foreach ($request->file('fields', []) as $fieldId => $file) {
-//         $fields[$fieldId] = $file;
-//     }
-
-//     $savedFields = [];
-
-//     foreach ($fields as $fieldId => $inputValue) {
-//         $customField = custom_field::find($fieldId);
-//         if (!$customField) continue;
-
-//         $isRequired = $customField->is_required;
-//         $type = $customField->type;
-//         $valueToStore = null;
-
-//         // البحث عن قيمة موجودة
-//         $existingValue = custom_field_value::where([
-//             'custom_field_id' => $customField->id,
-//             'ad_id' => $adId,
-//         ])->first();
-
-//         // معالجة أنواع الحقول
-//         if ($type === 'file') {
-//             $file = $request->file("fields.{$fieldId}");
-//             if ($isRequired && !$file) {
-//                 return response()->json([
-//                     'status' => false,
-//                     'message' => "No file uploaded for {$customField->en_name}"
-//                 ], 422);
-//             }
-
-//             if ($file && $file->isValid()) {
-//                 // حذف الملف القديم
-//                 if ($existingValue && $existingValue->value) {
-//                     Storage::disk('public')->delete($existingValue->value);
-//                 }
-
-//                 // رفع الجديد
-//                 $path = $file->store('custom_fields', 'public');
-//                 $valueToStore = $path;
-//             }
-//         } elseif ($type === 'checkbox') {
-//             $valueArray = is_array($inputValue) ? $inputValue : [$inputValue];
-//             if ($isRequired && empty($valueArray)) {
-//                 return response()->json([
-//                     'status' => false,
-//                     'message' => "{$customField->en_name} is required"
-//                 ], 422);
-//             }
-//             $valueToStore = $valueArray;
-//         } else {
-//             if ($isRequired && (is_null($inputValue) || $inputValue === '')) {
-//                 return response()->json([
-//                     'status' => false,
-//                     'message' => "{$customField->en_name} is required"
-//                 ], 422);
-//             }
-//             $valueToStore = $inputValue;
-//         }
-
-//         // حفظ القيمة
-//         $custom_field_value = custom_field_value::updateOrCreate(
-//             [
-//                 'custom_field_id' => $customField->id,
-//                 'ad_id' => $adId,
-//             ],
-//             [
-//                 'value' => $valueToStore,
-//             ]
-//         );
-
-//         if ($custom_field_value) {
-//             $custom_field_value->field_info = $customField;
-//             $savedFields[] = $custom_field_value;
-//         }
-//     }
-
-//     return response()->json([
-//         'status' => true,
-//         'custom_field_values' => $savedFields
-//     ]);
-// }
-
-
-
-
-
-
-
     }
-

@@ -175,7 +175,7 @@ public function view_opportunity($id)
 
 public function the_auction()
 {
-    $auction = auction::active()->latest()->first();
+    $auction = auction::active()->with(['publisher', 'images', 'category.ancestors', 'country', 'region'])->latest()->first();
     if (!$auction) {
         return ResponseHelper::error('not found an active auction', null, 404);
 

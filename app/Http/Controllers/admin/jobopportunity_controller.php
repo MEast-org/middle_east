@@ -44,7 +44,7 @@ class jobopportunity_controller extends Controller
     public function view_opportunity($id)
     {
 
-            $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region'])
+            $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region','applications'])
                 ->findOrFail($id);
 
             return response()->json([

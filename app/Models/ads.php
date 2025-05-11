@@ -17,6 +17,7 @@ class ads extends Model
         'category_id',
         'latitude',
         'longitude',
+        'price',
         'views',
         'shares',
         'state',
