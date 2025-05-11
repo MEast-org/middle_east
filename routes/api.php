@@ -19,8 +19,7 @@ use App\Http\Controllers\admin\banner_controller;
 use App\Http\Controllers\admin\contactinfo_controller;
 use App\Http\Controllers\admin\admin_notification;
 use App\Http\Controllers\admin\statistics_controller;
-
-
+use App\Http\Controllers\user\ChatController;
 use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\user\homepage_controller;
 use App\Http\Controllers\user\user_opportunity_controller;
@@ -225,6 +224,18 @@ Route::group([
     Route::get('/delete_auction/{id}', [user_auction_controller::class, 'delete_auction']);
     Route::get('/delete_image/{id}', [user_auction_controller::class, 'delete_image']);
 
+
+    //chat:
+    Route::middleware('auth:api')->group(function(){
+        Route::prefix('chat')->controller(ChatController::class)->group(function($route){
+            $route->post('start-conversation', 'startConversation');
+            $route->post('send-message', 'sendMessage');
+            $route->get('messages/{id}', 'getMessages');
+            $route->get('get-conversations', 'getConversations');
+            $route->post('update-status/{id}', 'updateStatus');
+            $route->post('get-voice-call-token', 'getVoiceCallToken');
+        });
+    });
 
 });
 
