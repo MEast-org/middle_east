@@ -25,8 +25,19 @@ class ResponseHelper
         ], $status_code);
     }
 
-    public static function returnValidationError($validator): JsonResponse
-    {
-        return self::error(__('validation.errorValidation'), $validator->errors()->first(), Response::HTTP_UNPROCESSABLE_ENTITY);
+    public static function returnValidationError($errors): JsonResponse
+{
+    // إذا كان كائن يحتوي على دالة errors()
+    if (is_object($errors) && method_exists($errors, 'errors')) {
+        $errors = $errors->errors(); // نحصل على MessageBag
     }
+
+    // إذا كان كائن MessageBag نحوله إلى مصفوفة
+    if (is_object($errors) && method_exists($errors, 'toArray')) {
+        $errors = $errors->toArray();
+    }
+
+    // هنا سنقوم بإرجاع جميع الأخطاء
+    return self::error(__('validation.errorValidation'), $errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+}
 }

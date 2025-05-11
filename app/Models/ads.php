@@ -17,6 +17,7 @@ class ads extends Model
         'category_id',
         'latitude',
         'longitude',
+        'price',
         'views',
         'shares',
         'state',
@@ -69,6 +70,11 @@ class ads extends Model
     public function fieldvalues()
     {
         return $this->hasMany(custom_field_value::class,'ad_id','id');
+    }
+
+        public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favorable');
     }
 
         protected static function booted()

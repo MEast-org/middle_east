@@ -175,9 +175,20 @@ public function filter_ads(Request $request)
         $query->where('region_id', $request->region_id);
     }
 
-    // فلترة حسب الفئة
     if ($request->filled('category_id')) {
-        $query->where('category_id', $request->category_id);
+        $category = category::find($request->category_id);
+        if ($category) {
+            $categoryIds = category::descendantsAndSelf($request->category_id)->pluck('id')->toArray();
+            $query->whereIn('category_id', $categoryIds);
+        }
+    }
+
+    if ($request->filled('publisher_type')) {
+        $query->where('publisher_type', $request->publisher_type);
+    }
+
+    if ($request->filled('publisher_id')) {
+        $query->where('publisher_id', $request->publisher_id);
     }
 
     if ($request->filled('start_date')) {
@@ -190,8 +201,12 @@ public function filter_ads(Request $request)
         $query->whereDate('created_at', '<=', $dateTo);
     }
 
+    if ($request->filled('state')) {
+        $query->where('state', $request->state);
+    }
+
     // إحضار العلاقات
-    $ads = $query->with(['country', 'region', 'category.ancestors','publisher','fieldvalues.field'])->paginate(10);
+    $ads = $query->with(['country', 'region', 'category.ancestors','publisher','fieldvalues.field'])->latest()->paginate(10);
 
     return response()->json([
         'ads' => $ads

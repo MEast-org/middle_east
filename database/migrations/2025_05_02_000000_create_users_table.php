@@ -25,6 +25,7 @@ return new class extends Migration
             $table->timestamp('code_expires_at')->nullable();
             $table->timestamp('verified_at')->nullable();
             $table->string('fcm_token')->nullable();
+            $table->enum('state', ['active', 'inactive'])->default('active');//new
 
 
             // حقول جديدة لتسجيل الدخول الاجتماعي
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->string('provider_id')->nullable();//->comment('المعرف الفريد من مزود الخدمة');
             $table->string('provider_token')->nullable();//->comment('Token من مزود الخدمة');
             $table->string('provider_refresh_token')->nullable();//->comment('Refresh Token من مزود الخدمة');
+
 
             $table->timestamps();
         });

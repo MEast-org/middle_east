@@ -26,6 +26,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'country_id',
         'region_id',
         'password',
+        'state',
         'verification_code',
         'code_expires_at',
         'verified_at',
@@ -75,10 +76,20 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->morphMany(job_opportunity::class, 'publisher');
     }
+       //فرص العمل التي قدمت عليهم
+        public function applications()
+    {
+        return $this->morphMany(applicant::class, 'applicant');
+    }
 
     public function auctions()
     {
         return $this->morphMany(auction::class, 'publisher');
+    }
+
+        public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favoriter');
     }
 
 

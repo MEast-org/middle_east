@@ -44,7 +44,7 @@ class jobopportunity_controller extends Controller
     public function view_opportunity($id)
     {
 
-            $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region'])
+            $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region','applications'])
                 ->findOrFail($id);
 
             return response()->json([
@@ -268,5 +268,75 @@ public function update_opportunity(Request $request, $id)
                         'opportunities' => $opportunities
                     ]);
             }
+
+         public function filter_jobs(Request $request)
+        {
+            $query = job_opportunity::query();
+
+            if ($request->filled('name')) {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            }
+
+            // فلترة حسب البلد
+            if ($request->filled('country_id')) {
+                $query->where('country_id', $request->country_id);
+            }
+
+            // فلترة حسب المنطقة
+            if ($request->filled('region_id')) {
+                $query->where('region_id', $request->region_id);
+            }
+
+            if ($request->filled('category_id')) {
+                $category = category::find($request->category_id);
+                if ($category) {
+                    $categoryIds = category::descendantsAndSelf($request->category_id)->pluck('id')->toArray();
+                    $query->whereIn('category_id', $categoryIds);
+                }
+            }
+
+            if ($request->filled('publisher_type')) {
+                $query->where('publisher_type', $request->publisher_type);
+            }
+
+            if ($request->filled('publisher_id')) {
+                $query->where('publisher_id', $request->publisher_id);
+            }
+
+            // فلترة حسب التاريخ
+            if ($request->filled('start_date')) {
+                $query->whereDate('created_at', '>=', Carbon::parse($request->start_date)->format('Y-m-d'));
+            }
+
+            if ($request->filled('end_date')) {
+                $query->whereDate('created_at', '<=', Carbon::parse($request->end_date)->format('Y-m-d'));
+            }
+
+            // فلترة حسب الحد الأدنى للراتب
+            if ($request->filled('min_salary')) {
+                $query->where('min_salary', '>=', $request->min_salary);
+            }
+
+            // فلترة حسب الحد الأعلى للراتب
+            if ($request->filled('max_salary')) {
+                $query->where('max_salary', '<=', $request->max_salary);
+            }
+
+            // فلترة حسب نوع العمل
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
+
+            if ($request->filled('state')) {
+                $query->where('state', $request->state);
+            }
+
+            // العلاقات المرتبطة (عدّلها حسب الحاجة)
+            $jobs = $query->with(['country', 'region', 'category.ancestors', 'publisher'])->latest()->paginate(10);
+
+            return response()->json([
+                'data' => $jobs
+            ]);
+        }
 
 }

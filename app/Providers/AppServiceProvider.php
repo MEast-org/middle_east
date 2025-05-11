@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
             'company' => company::class,
             'ads' =>ads::class,
             'job_opportunity' =>job_opportunity::class,
+            'auction' =>auction::class,
         ]);
         // Event::listen(
         //     MessageReadEvent::class,

@@ -73,9 +73,20 @@ class company extends Authenticatable implements JWTSubject
         return $this->morphMany(job_opportunity::class, 'publisher');
     }
 
+      //فرص العمل التي قدمت عليهم
+      public function applications()
+      {
+          return $this->morphMany(applicant::class, 'applicant');
+      }
+
     public function auctions()
     {
         return $this->morphMany(auction::class, 'publisher');
+    }
+
+        public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favoriter');
     }
 
 }

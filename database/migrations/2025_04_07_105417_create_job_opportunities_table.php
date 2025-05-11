@@ -26,7 +26,8 @@ return new class extends Migration
             $table->decimal('max_salary', 10, 3)->nullable();//new
             $table->date('starts_at')->nullable();//new
             $table->date('expires_at')->nullable();
-            $table->enum('type', ['full_time', 'part_time', 'contract', 'internship', 'remote']);
+            // $table->enum('type', ['full_time', 'part_time', 'contract', 'internship', 'remote']);
+            $table->string('type');
             $table->json('social_links')->nullable();//new
             $table->enum('state', ['active', 'inactive'])->default('active');//new
 

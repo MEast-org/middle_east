@@ -17,6 +17,7 @@ use App\Http\Controllers\admin\auction_controller;
 use App\Http\Controllers\admin\slider_controller;
 use App\Http\Controllers\admin\banner_controller;
 use App\Http\Controllers\admin\contactinfo_controller;
+use App\Http\Controllers\admin\policyTerms_controller;
 use App\Http\Controllers\admin\admin_notification;
 use App\Http\Controllers\admin\statistics_controller;
 use App\Http\Controllers\user\ChatController;
@@ -24,8 +25,10 @@ use App\Http\Controllers\user\user_notification;
 use App\Http\Controllers\user\homepage_controller;
 use App\Http\Controllers\user\user_opportunity_controller;
 use App\Http\Controllers\user\user_auction_controller;
+use App\Http\Controllers\user\user_ads_controller;
 use App\Http\Controllers\user\auth_company_controller;
 use App\Http\Controllers\user\auth_user_controller;
+use App\Http\Controllers\user\favorite_controller;
 
 
 
@@ -132,6 +135,8 @@ Route::group([
     Route::post('/update_opportunity/{id}', [jobopportunity_controller::class, 'update_opportunity']);
     Route::post('/view_opportunity/{id}', [jobopportunity_controller::class, 'view_opportunity']);
     Route::post('/delete_opportunity/{id}', [jobopportunity_controller::class, 'delete_opportunity']);
+    Route::post('/filter_jobs', [jobopportunity_controller::class, 'filter_jobs']);
+
     Route::post('/company_opportunities/{id}', [jobopportunity_controller::class, 'company_opportunities']);
     Route::post('/user_opportunities/{id}', [jobopportunity_controller::class, 'user_opportunities']);
 
@@ -182,7 +187,14 @@ Route::group([
     Route::post('/update_contact/{id}', [contactinfo_controller::class, 'update_contact']);
     Route::get('/delete_contact/{id}', [contactinfo_controller::class, 'delete_contact']);
 
+    Route::get('/policyTerms', [policyTerms_controller::class, 'index']); // عرض الكل
+    Route::get('/view_policyTerms/{key}/{locale}', [policyTerms_controller::class, 'show']); // عرض حسب المفتاح واللغة
+    Route::post('/add_policyTerms', [policyTerms_controller::class, 'store']); // إنشاء
+    Route::post('/update_policyTerms/{id}', [policyTerms_controller::class, 'update']); // تعديل
+    Route::get('/delete_policyTerms/{id}', [policyTerms_controller::class, 'destroy']); // حذف
+
     Route::post('/statistics', [statistics_controller::class, 'statistics']);
+    Route::get('/AnalyticsCategory', [statistics_controller::class, 'AnalyticsCategory']);
     Route::post('/send_notification', [admin_notification::class, 'send_notification']);
 
 
@@ -216,6 +228,20 @@ Route::group([
     Route::post('/update_opportunity/{id}', [user_opportunity_controller::class, 'update_opportunity']);
     Route::get('/delete_opportunity/{id}', [user_opportunity_controller::class, 'delete_opportunity']);
 
+    Route::post('/apply_opportunity', [user_opportunity_controller::class, 'apply']);
+    Route::get('/my_applications', [user_opportunity_controller::class, 'myApplications']);
+
+    Route::get('/my_ads', [user_ads_controller::class, 'my_ads']);
+    Route::get('my_ads/{id}', [user_ads_controller::class, 'show_ad']);
+    Route::post('/add_ad', [user_ads_controller::class, 'add_ad']);
+    Route::post('update_ad/{id}', [user_ads_controller::class, 'update_ad']);
+    Route::get('delete_ad/{id}', [user_ads_controller::class, 'delete_ad']);
+
+
+
+
+
+
 
     Route::get('/my_auctions', [user_auction_controller::class, 'my_auctions']);
     Route::get('/my_auctions/{id}', [user_auction_controller::class, 'my_auction']);
@@ -237,6 +263,9 @@ Route::group([
         });
     });
 
+    Route::post('/add_favorite', [favorite_controller::class, 'add']);
+    Route::get('/remove_favorite/{id}', [favorite_controller::class, 'remove']);
+    Route::get('/my_favorites', [favorite_controller::class, 'list']);
 });
 
 
@@ -249,6 +278,8 @@ Route::group([
     Route::get('parentCategories',[homepage_controller::class, 'parentCategories']);
     Route::get('/categoryTree', [homepage_controller::class, 'categoryTree']);
     Route::get('/contacts', [homepage_controller::class, 'contacts']);
+    Route::get('/policyTerms', [homepage_controller::class, 'policyTerms']);
+    Route::get('/view_policyTerms/{key}/{locale}', [homepage_controller::class, 'view_policyTerms']);
 
     Route::get('/ads', [homepage_controller::class, 'all_ads']);
     Route::get('/ads/{id}', [homepage_controller::class, 'view_ad']);

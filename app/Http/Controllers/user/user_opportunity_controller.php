@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\job_opportunity;
+use App\Models\applicant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\ResponseHelper;
@@ -25,7 +26,8 @@ class user_opportunity_controller extends Controller
         $user = auth()->user();
         if (!$user) return ResponseHelper::error('Unauthorized', null, 401);
 
-        $jobs = job_opportunity::where('publisher_type', $user instanceof \App\Models\company ? 'company' : 'user')
+        $jobs = job_opportunity::with(['category.ancestors', 'country', 'region'])
+            ->where('publisher_type', $user instanceof \App\Models\company ? 'company' : 'user')
             ->where('publisher_id', $user->id)
             ->latest()
             ->paginate(request('page_size', 10));
@@ -36,7 +38,8 @@ class user_opportunity_controller extends Controller
     public function my_opportunity($id)
     {
         $user = auth()->user();
-        $job = job_opportunity::find($id);
+        $job = job_opportunity::with(['applications', 'category.ancestors', 'country', 'region'])->find($id);
+
         if (!$job) return ResponseHelper::error('not found', null, 404);
 
         if (!$user || !($job->publisher_id == $user->id && $job->publisher_type == (get_class($user) === 'App\\Models\\company' ? 'company' : 'user'))) {
@@ -118,6 +121,84 @@ class user_opportunity_controller extends Controller
         $job->delete();
         return ResponseHelper::success('Deleted successfully');
     }
+
+
+       /////////////// aplicants for job opportunity ////////////////
+
+
+        public function apply(Request $request)
+        {
+            $validator = Validator::make($request->all(), [
+                'opportunity_id' => 'required|exists:job_opportunities,id',
+                'name' => 'required|string|max:255',
+                'description' => 'required|string',
+                'cv' => 'required|file|mimes:pdf,doc,docx|max:5120',
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseHelper::returnValidationError($validator);
+            }
+
+
+            $applicant = auth()->user(); // حسب نوع المسجل دخول
+            $opportunity = job_opportunity::findOrFail($request->opportunity_id);
+
+            if (!$applicant) {
+                return ResponseHelper::error('Authentication failed');
+            }
+
+            // التحقق من عدم التقديم المسبق
+            $alreadyApplied = applicant::where([
+                'opportunity_id' => $request->opportunity_id,
+                'applicant_id' => $applicant->id,
+                'applicant_type' =>(get_class($applicant) === 'App\\Models\\company' ? 'company' : 'user'),
+            ])->exists();
+
+            if ($alreadyApplied) {
+                return ResponseHelper::error('You have already applied for this job');
+            }
+
+            $cvPath = null;
+            if ($request->hasFile('cv')) {
+                $cvPath = $request->file('cv')->store('cvs', 'public');
+            }
+
+            $applicantData = applicant::create([
+                'opportunity_id' => $request->opportunity_id,
+                'applicant_id' => $applicant->id,
+                'applicant_type' => (get_class($applicant) === 'App\\Models\\company' ? 'company' : 'user'),
+                'name' => $request->name,
+                'description' => $request->description,
+                'cv' => $cvPath,
+            ]);
+            $opportunity->incrementApplicants();
+
+            return ResponseHelper::success('Application submitted successfully', $applicantData);
+        }
+
+
+
+        public function myApplications(Request $request)
+        {
+            $applicant = auth()->user();
+
+            if (!$applicant) {
+                return ResponseHelper::error('Authentication failed');
+            }
+
+            $pageSize = $request->input('page_size', 10); // العدد في كل صفحة
+
+            // جلب التقديمات مع علاقات العمل المرتبطة بها
+            $applications = $applicant->applications()
+            ->with([
+                'opportunity.publisher',
+                'opportunity.category.ancestors',
+                'opportunity.country',
+                'opportunity.region'
+            ])->latest()->paginate($pageSize);
+
+            return ResponseHelper::success('My job applications', $applications);
+        }
 
 
 

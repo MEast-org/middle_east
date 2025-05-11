@@ -62,4 +62,9 @@ class auction extends Model
     {
         return $this->morphTo();
     }
+
+    public function favorites()
+    {
+        return $this->morphMany(favorite::class, 'favorable');
+    }
 }

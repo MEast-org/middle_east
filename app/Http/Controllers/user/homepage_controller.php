@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\country;
 use App\Models\category;
 use App\Models\region;
+use App\Models\policy_terms;
 
 use App\Models\slider;
 use App\Models\banner;
@@ -57,6 +58,24 @@ public function contacts()
         return ResponseHelper::success('Contact info list', $infos);
     }
 
+       // عرض الكل
+       public function policyTerms()
+       {
+           $all = policy_terms::all();
+           return ResponseHelper::success('Pages retrieved successfully',$all);
+       }
+
+ // عرض صفحة معينة
+    public function view_policyTerms($key, $locale)
+    {
+        $page = policy_terms::where('key', $key)->where('locale', $locale)->first();
+
+        if (!$page) {
+            return ResponseHelper::error('Page not found.', 404);
+        }
+
+        return ResponseHelper::success('Page retrieved successfully',$page);
+    }
 
 public function all_ads(Request $request)
 {
@@ -115,7 +134,6 @@ public function opportunities(Request $request)
 {
     $query = job_opportunity::with([
         'publisher',
-        'fieldvalues.field'
     ]);
 
     if ($request->filled('country_id')) {
@@ -143,7 +161,7 @@ public function opportunities(Request $request)
 
 public function view_opportunity($id)
 {
-    $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region', 'fieldvalues.field'])
+    $opportunity = job_opportunity::with(['publisher', 'category.ancestors', 'country', 'region'])
         ->find($id);
 
     if (!$opportunity) {
@@ -157,7 +175,7 @@ public function view_opportunity($id)
 
 public function the_auction()
 {
-    $auction = auction::active()->latest()->first();
+    $auction = auction::active()->with(['publisher', 'images', 'category.ancestors', 'country', 'region'])->latest()->first();
     if (!$auction) {
         return ResponseHelper::error('not found an active auction', null, 404);
 
